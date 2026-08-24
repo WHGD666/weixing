@@ -1,0 +1,60 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Local data and competition assets
+data/
+datasets/
+official_data/
+external_data/
+raw_data/
+shangchuan/data/
+shangchuan/*.zip
+.agents/
+
+# Training outputs
+runs/
+outputs/
+work_dirs/
+checkpoints/
+weights/
+models/
+*.pt
+*.pth
+*.onnx
+*.engine
+*.trt
+
+# Logs and experiment trackers
+logs/
+wandb/
+mlruns/
+tensorboard/
+*.log
+
+# Large generated files
+*.zip
+*.tar
+*.tar.gz
+*.7z
+*.rar
+*.npy
+*.npz
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
