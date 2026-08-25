@@ -1,0 +1,1 @@
+run_id,status,task,experiment_role,protocol_version,git_branch,git_commit,git_dirty,data_fingerprint,split_fingerprint,config_path,command,primary_recall,primary_fdr,max_image_time_seconds,holdout_evaluated,artifact_paths,failure_type,failure_message,decision

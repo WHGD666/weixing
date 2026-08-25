@@ -24,6 +24,16 @@ shangchuan/data/
 shangchuan/*.zip
 .agents/
 
+# Experiment worktree bulk artifacts
+shiyan/artifacts/predictions/*
+!shiyan/artifacts/predictions/.gitkeep
+shiyan/artifacts/event_logs/*
+!shiyan/artifacts/event_logs/.gitkeep
+shiyan/artifacts/frozen_model_artifacts/*
+!shiyan/artifacts/frozen_model_artifacts/.gitkeep
+shiyan/artifacts/submission_packages/*
+!shiyan/artifacts/submission_packages/.gitkeep
+
 # Training outputs
 runs/
 outputs/
