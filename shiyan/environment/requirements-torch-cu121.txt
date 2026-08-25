@@ -1,0 +1,9 @@
+# PyTorch CUDA dependency layer.
+# Install this file first inside the conda environment `weixing`.
+# If the official contest platform later requires another CUDA runtime,
+# create a new torch requirements file instead of silently editing old run records.
+
+--index-url https://download.pytorch.org/whl/cu121
+torch
+torchvision
+torchaudio

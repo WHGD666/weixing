@@ -1,0 +1,9 @@
+# Development and experiment-management helpers.
+# These packages support tests, notebooks, run records, and readable local logs.
+
+pytest>=8.0
+ipykernel>=6.29
+jupyterlab>=4.1
+tensorboard>=2.16
+psutil>=5.9
+tabulate>=0.9

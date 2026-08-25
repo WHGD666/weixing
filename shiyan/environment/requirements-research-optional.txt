@@ -1,0 +1,14 @@
+# Optional research frameworks.
+# Do not install this file into the main environment before the baseline is stable.
+#
+# Suggested policy:
+# - Keep MMDetection/Detectron2 in a separate conda environment.
+# - Record its own lock files under shiyan/environment/locks/.
+# - Only compare results after data split, metric code, and label contract are frozen.
+#
+# Example candidates to evaluate later:
+#
+# openmim
+# mmengine
+# mmcv
+# mmdet

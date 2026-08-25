@@ -19,6 +19,7 @@
 shiyan/
 ├── project_contract/      # 任务、标签、指标、划分策略等协议
 ├── data_registry/         # 数据清单、指纹、审计报告、标签版本、划分版本
+├── environment/           # Python 依赖清单、安装顺序、环境冻结记录
 ├── configs/               # 数据、协议、模型、训练、推理、评估配置
 ├── src/                   # 后续代码模块位置，目前只建目录
 ├── scripts/               # 可执行脚本入口位置，目前只建目录

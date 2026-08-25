@@ -1,0 +1,7 @@
+# Optional inference and fusion layer.
+# Install after the first baseline is already trainable and evaluable.
+
+sahi>=0.11
+ensemble-boxes>=1.0
+onnx>=1.16
+onnxruntime-gpu>=1.18
