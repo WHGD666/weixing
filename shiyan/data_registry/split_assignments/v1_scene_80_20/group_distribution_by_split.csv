@@ -1,0 +1,4 @@
+﻿group,train_objects,val_objects,total_objects,val_ratio
+ship,2156,526,2682,0.196122
+aircraft,14213,3636,17849,0.203709
+vehicle,321,81,402,0.201493

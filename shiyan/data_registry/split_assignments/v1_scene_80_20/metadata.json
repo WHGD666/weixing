@@ -1,0 +1,27 @@
+{
+  "split_version": "v1_scene_80_20",
+  "audit_version": "v0_original",
+  "generated_at_utc": "2026-08-28T11:20:27.035680+00:00",
+  "seed": 20260828,
+  "trials": 5000,
+  "target_val_ratio": 0.2,
+  "split_unit": "scene_id inferred from filename before _cropN",
+  "original_data_policy": "No files were moved, copied, renamed, or modified.",
+  "split_fingerprint_sha256": "126b297c2706c71b8be8df4e3736b9b30871f18673147df1c3e31e3997f8ec77",
+  "diagnostics": {
+    "val_images": 897,
+    "train_images": 3584,
+    "val_objects": 4243,
+    "train_objects": 16690,
+    "image_ratio": 0.20017853157777282,
+    "object_ratio": 0.20269431041895572,
+    "mean_class_ratio_error": 0.017150381583208314,
+    "max_class_ratio_error": 0.042229367631296894,
+    "missing_val_classes": [],
+    "missing_train_classes": [],
+    "rare_underfilled_classes": [],
+    "score": 0.8112265330142702,
+    "trial": 4956,
+    "seed_used": 20265784
+  }
+}

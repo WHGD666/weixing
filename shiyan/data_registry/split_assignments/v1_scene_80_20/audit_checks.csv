@@ -1,0 +1,5 @@
+﻿check,status,detail
+scene_disjointness,pass,0 overlapping scenes
+all_classes_present_in_train,pass,
+all_classes_present_in_val,pass,
+target_val_image_ratio,pass,0.200179

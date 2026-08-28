@@ -1,0 +1,3 @@
+﻿split,images,image_ratio,scenes,objects,object_ratio
+train,3584,0.799821,2900,16690,0.797306
+val,897,0.200179,725,4243,0.202694
