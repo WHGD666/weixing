@@ -1,2 +1,2 @@
 experiment_id,role,protocol_version,control_experiment,changed_factor,status,best_run_id,decision,notes
-EXP001_original_yolo11s_baseline,competition,protocol_v1_original_scene_80_20,,raw_labels_yolo11s_1024,prepared,,pending_training,Use official original labels and frozen scene split for first baseline
+EXP001_original_yolo11s_baseline,competition,protocol_v1_original_scene_80_20,,raw_labels_yolo11s_1024,interrupted,20260828_1940_detect_exp001_original_yolo11s_9e250460,baseline_recorded,"56 epochs recorded; best epoch 55; local best model retained; official metrics not evaluated"
