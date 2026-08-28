@@ -195,7 +195,7 @@ def split_fingerprint(assignments: list[dict[str, Any]]) -> str:
 def create_dataset_yaml(path: Path, split_version: str) -> None:
     names = {class_id: name for class_id, (name, _group) in EXPECTED_CLASSES.items()}
     data = {
-        "path": "../../..",
+        "path": ".",
         "train": f"shiyan/data_registry/split_assignments/{split_version}/train.txt",
         "val": f"shiyan/data_registry/split_assignments/{split_version}/val.txt",
         "nc": len(EXPECTED_CLASSES),

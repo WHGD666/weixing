@@ -1,0 +1,42 @@
+# EXP001: first original-label YOLO baseline.
+#
+# Purpose:
+# - Use official original labels only.
+# - Use frozen v1_scene_80_20 split for internal validation.
+# - Produce a practical first model for later Docker packaging smoke tests.
+#
+# Run from repository root:
+# yolo detect train cfg=shiyan/configs/train/exp001_original_yolo11s_baseline.yaml
+
+task: detect
+mode: train
+
+model: yolo11s.pt
+data: shiyan/configs/dataset/weixing_v1_scene_80_20.yaml
+
+epochs: 80
+patience: 20
+batch: 4
+imgsz: 1024
+device: 0
+workers: 4
+
+project: runs/train
+name: exp001_original_yolo11s_baseline
+exist_ok: false
+
+pretrained: true
+optimizer: auto
+seed: 20260828
+deterministic: true
+single_cls: false
+rect: false
+cos_lr: true
+close_mosaic: 10
+amp: true
+cache: false
+plots: true
+save: true
+save_period: -1
+val: true
+verbose: true

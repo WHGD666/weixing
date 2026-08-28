@@ -1,4 +1,4 @@
-path: ../../..
+path: .
 train: shiyan/data_registry/split_assignments/v1_scene_80_20/train.txt
 val: shiyan/data_registry/split_assignments/v1_scene_80_20/val.txt
 nc: 25
