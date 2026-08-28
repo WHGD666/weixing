@@ -1,9 +1,10 @@
-# PyTorch CUDA dependency layer.
-# Install this file first inside the conda environment `weixing`.
-# If the official contest platform later requires another CUDA runtime,
-# create a new torch requirements file instead of silently editing old run records.
+# PyTorch CUDA dependency layer for Windows/Linux + NVIDIA GPU.
+# This is kept separate for staged installs. For one-command setup, prefer
+# shiyan/environment/requirements.txt.
+#
+# If the official contest platform later requires another CUDA runtime, create a
+# new torch requirements file instead of silently editing old run records.
 
 --index-url https://download.pytorch.org/whl/cu121
-torch
-torchvision
-torchaudio
+torch==2.5.1+cu121
+torchvision==0.20.1+cu121

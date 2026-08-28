@@ -11,7 +11,17 @@
 
 这个状态是一个合适的起点。后续环境应按阶段安装，先保证 baseline 可跑通，再补充大图推理、融合和研究型框架。
 
-## 推荐安装顺序
+## 推荐安装方式
+
+当前推荐直接使用总表安装：
+
+```powershell
+python -m pip install -r shiyan/environment/requirements.txt
+```
+
+这份总表包含 baseline 训练、数据审计、COCO 输出、可视化、切片推理和本地实验管理需要的核心依赖，不包含 MMDetection、Detectron2、TensorRT 等后期研究/部署框架。
+
+## 分层安装顺序
 
 第一步，安装 PyTorch CUDA 版本：
 
