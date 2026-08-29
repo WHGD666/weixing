@@ -1,6 +1,6 @@
 # v1 交付阶段性冻结清单
 
-状态：**candidate-prepared-local-docker-verified，等待 ACR 推送和官方试运行**
+状态：**official-trial-completed，v1 官方试运行结果已归档**
 
 本文记录第一轮原始数据基线的交付对象。它是 `v1` 的版本边界，不替代比赛官方最终评测结果。
 
@@ -19,7 +19,7 @@
 | 本地镜像 | `weixing-submission:v1` |
 | 镜像架构 | `linux/amd64` |
 | 目标设备 | CUDA GPU |
-| 当前状态 | 本地候选已验证，等待官方试运行 |
+| 当前状态 | 已完成 ACR 推送和官方试运行，提交 `2551` 已计分 |
 
 ## 二、冻结的推理参数
 
@@ -70,7 +70,7 @@
 submit/v1/test-output/docker_full_20260829/
 ```
 
-以上是公开验证集上的内部结果，不是官方封闭测试成绩。详细运行记录见 [`INF008_docker_full_validation.md`](../../shiyan/experiments/notes/INF008_docker_full_validation.md)。
+以上是公开验证集上的内部结果，不是官方封闭测试成绩。详细运行记录见 [`INF008_docker_full_validation.md`](../../../shiyan/experiments/notes/INF008_docker_full_validation.md)。
 
 ## 四、当前已冻结的边界
 
@@ -83,12 +83,16 @@ submit/v1/test-output/docker_full_20260829/
 - `/input`、`/output` 和 `/output/result.json` 接口固定；
 - 本地 Docker 构建和断网全量验证证据保留。
 
-## 五、仍未完成的事项
+## 五、官方试运行结果
 
-- [ ] 比赛系统开放后生成临时 ACR 登录命令；
-- [ ] 推送 `trial-v1.0` 镜像；
-- [ ] 在比赛评测系统提交试运行；
-- [ ] 保存官方 Recall、FDR、耗时、分数、日志和提交时间。
+- [x] 使用平台临时凭据完成 ACR 推送；
+- [x] 推送 `trial-v1.0` 镜像，manifest digest 为 `sha256:414cb1e6e2a8d419d0f55ba3a6137fae15dc95bf84c523e449e589dbfc1c3d99`；
+- [x] 提交官方试运行，提交 ID 为 `2551`；
+- [x] 平台状态为 `ACCEPTED`，任务已完成且计入成绩；
+- [x] 综合分 `84.3313`，排名第 42；
+- [x] 官方页面可见指标已记录到 [`SUB001_trial_2551.md`](../../../shiyan/submissions/official_feedback/SUB001_trial_2551.md)。
+
+官方页面未展示整体 Recall、整体虚警率的完整字段，不能用分组字段反推整体值；本地公开验证集指标与官方封闭测试结果仍须分开书写。
 
 ## 六、交付文件边界
 

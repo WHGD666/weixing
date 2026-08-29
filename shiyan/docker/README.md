@@ -26,4 +26,4 @@ Docker 封装与评测系统资料目录。
 - 架构：`linux/amd64`；
 - GPU + `--network none` 全量处理 897 张图片；
 - 内部 Recall/FDR/Latency 三项门槛均通过；
-- ACR push 和官方封闭测试尚未完成。
+- ACR push 已完成；官方提交 `2551` 已 `ACCEPTED`、任务已完成，综合分 `84.3313`，排名第 42。详细结果见 `shiyan/submissions/official_feedback/SUB001_trial_2551.md`。

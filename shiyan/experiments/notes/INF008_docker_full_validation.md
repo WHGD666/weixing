@@ -84,19 +84,18 @@ submit/v1/test-output/docker_full_20260829/metrics/official_metrics.md
 
 ## 6. 阶段性冻结决策
 
-`submit/v1` 进入“本地交付候选已验证、等待官方试运行”的阶段性冻结：
+`submit/v1` 进入“本地交付候选已验证、官方试运行结果已归档”的阶段性冻结：
 
 - 冻结原始标签版本 `v0_original`；
 - 冻结验证协议 `v1_scene_80_20`；
 - 冻结模型及其 SHA-256；
 - 冻结 tiled 推理参数和官方输出接口；
-- 暂不冻结官方成绩，也不冻结后续人工审计方向。
+- 官方提交 `2551` 的结果单独记录在 `shiyan/submissions/official_feedback/SUB001_trial_2551.md`；不冻结后续人工审计方向。
 
 任何模型、标签、阈值、切片策略或入口代码的实质变化，都应创建 `submit/v2`，不得直接覆盖本候选。
 
 ## 7. 后续动作
 
-1. 比赛系统开放后，使用页面生成的临时 ACR 登录命令登录。
-2. 推送 `competition-registry.cn-beijing.cr.aliyuncs.com/competition/team614651:trial-v1.0`。
-3. 在比赛页面提交试运行并保存官方状态、成绩、日志和提交时间。
-4. 官方结果归档后，再决定是否启用 `AUDIT001` 并创建 `EXP002`/`submit/v2`。
+1. 保留官方提交 `2551` 作为第一轮原始标签基线。
+2. 根据官方分组指标和既有错误分析，决定是否启用 `AUDIT001`。
+3. 如需改标、重新训练或改动推理参数，创建 `EXP002`/`submit/v2`，不得覆盖 v1。

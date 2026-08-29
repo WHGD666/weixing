@@ -18,6 +18,6 @@
 
 - `v1_delivery_freeze.md`：v1 阶段性冻结边界、模型哈希、推理参数和本地验证结果；
 - `v1_runtime_dependency_plan.md`：Windows 研发依赖与 Docker 运行依赖的边界；
-- `../../experiments/notes/INF008_docker_full_validation.md`：Docker GPU、断网和 897 张全量验证记录。
+- `../../../shiyan/experiments/notes/INF008_docker_full_validation.md`：Docker GPU、断网和 897 张全量验证记录。
 
-当前 manifest 记录的是本地交付候选状态。ACR push、官方平台提交时间、任务状态和封闭测试成绩，需要在比赛系统开放并返回结果后补入，不能提前填写或用本地指标替代。
+当前 manifest 记录的是 v1 交付候选及其官方试运行结果。ACR push 已完成，官方平台提交 `2551` 已返回 `ACCEPTED`、任务已完成、综合分 `84.3313`、排名第 42。完整可见字段见 [`../../../shiyan/submissions/official_feedback/SUB001_trial_2551.md`](../../../shiyan/submissions/official_feedback/SUB001_trial_2551.md) 和 `../../../shiyan/experiments/registry/submission_registry.csv`。
