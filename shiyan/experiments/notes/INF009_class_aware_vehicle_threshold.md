@@ -49,6 +49,7 @@
 
 候选必须先通过结果 schema 和图片覆盖率检查，然后使用相同的 `evaluate_official.py` 评估。采用以下选择门槛：
 
+- 刚性 gate 的 Recall/FDR 基于 ship、aircraft、vehicle 三大类指标的算术平均；pooled Overall 指标仅作诊断；
 - Overall Recall 相对控制值下降不超过 `0.005`；
 - Overall FDR 不高于控制值 `0.070975`；
 - 三大类 Recall 相对控制值下降不超过 `0.010`；

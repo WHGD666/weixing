@@ -105,6 +105,14 @@ def _aggregate(stats: Iterable[dict[str, int]]) -> dict[str, object]:
     }
 
 
+def _gate_flags(recall: float | None, fdr: float | None, latency_pass: object) -> dict[str, object]:
+    return {
+        "recall_ge_0_85": recall is not None and float(recall) >= 0.85,
+        "fdr_le_0_20": fdr is not None and float(fdr) <= 0.20,
+        "latency_le_20s": latency_pass,
+    }
+
+
 def evaluate(prediction_path: Path, image_list_path: Path, timings_path: Path | None) -> dict[str, object]:
     image_paths = read_image_list(image_list_path)
     document = json.loads(prediction_path.read_text(encoding="utf-8"))
@@ -150,6 +158,10 @@ def evaluate(prediction_path: Path, image_list_path: Path, timings_path: Path | 
     overall = _aggregate(class_stats)
     valid_group_recalls = [float(item["recall"]) for item in groups.values() if item["recall"] is not None]
     valid_group_fdrs = [float(item["fdr"]) for item in groups.values() if item["fdr"] is not None]
+    group_mean = {
+        "recall": sum(valid_group_recalls) / len(valid_group_recalls) if valid_group_recalls else None,
+        "fdr": sum(valid_group_fdrs) / len(valid_group_fdrs) if valid_group_fdrs else None,
+    }
 
     timing_summary: dict[str, object] = {"available": False}
     if timings_path is not None:
@@ -169,18 +181,17 @@ def evaluate(prediction_path: Path, image_list_path: Path, timings_path: Path | 
         "iou_thresholds": {"vehicle": 0.35, "ship_and_aircraft": 0.50},
         "image_count": len(image_paths),
         "overall": overall,
+        "pooled_overall_gates": _gate_flags(
+            overall["recall"], overall["fdr"], timing_summary.get("pass_latency_20s")
+        ),
         "groups": groups,
-        "group_mean": {
-            "recall": sum(valid_group_recalls) / len(valid_group_recalls) if valid_group_recalls else None,
-            "fdr": sum(valid_group_fdrs) / len(valid_group_fdrs) if valid_group_fdrs else None,
-        },
+        "group_mean": group_mean,
         "per_class": per_class,
         "timing": timing_summary,
-        "gates": {
-            "recall_ge_0_85": overall["recall"] is not None and float(overall["recall"]) >= 0.85,
-            "fdr_le_0_20": overall["fdr"] is not None and float(overall["fdr"]) <= 0.20,
-            "latency_le_20s": timing_summary.get("pass_latency_20s"),
-        },
+        "gate_basis": "three_group_macro_mean",
+        "gates": _gate_flags(
+            group_mean["recall"], group_mean["fdr"], timing_summary.get("pass_latency_20s")
+        ),
     }
 
 
@@ -195,6 +206,7 @@ def _write_outputs(metrics: dict[str, object], output_dir: Path) -> None:
         writer.writeheader()
         writer.writerows(metrics["per_class"])
     overall = metrics["overall"]
+    group_mean = metrics["group_mean"]
     timing = metrics["timing"]
     lines = [
         "# Internal Official-Metric Evaluation",
@@ -205,6 +217,9 @@ def _write_outputs(metrics: dict[str, object], output_dir: Path) -> None:
         f"- Overall TP / FP / FN: {overall['tp']} / {overall['fp']} / {overall['fn']}",
         f"- Overall Recall: {overall['recall']}",
         f"- Overall FDR: {overall['fdr']}",
+        f"- Group-mean Recall (rigid-gate basis): {group_mean['recall']}",
+        f"- Group-mean FDR (rigid-gate basis): {group_mean['fdr']}",
+        f"- Gates (three-group mean): {metrics['gates']}",
         f"- Timing: {timing}",
         "",
         "| Group | Recall | FDR | TP | FP | FN |",

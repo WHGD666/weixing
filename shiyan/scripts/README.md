@@ -28,7 +28,7 @@ python shiyan/scripts/evaluate_official.py `
   --output-dir runs/test/exp001_baseline_sample/metrics
 ```
 
-这一步使用项目的 Metric Contract v0：FSC 使用 IoU 0.35，舰船和飞机使用 IoU 0.50，按置信度从高到低匹配，并统计 25 类及三大类的 TP、FP、FN、Recall、FDR。抽样结果只能用于排查流程，不能用于判断比赛门槛。
+这一步使用项目的 Metric Contract v0：FSC 使用 IoU 0.35，舰船和飞机使用 IoU 0.50，按置信度从高到低匹配，并统计 25 类及三大类的 TP、FP、FN、Recall、FDR。刚性 gate 使用三大类 Recall/FDR 的算术平均；pooled Overall 指标仅作诊断。抽样结果只能用于排查流程，不能用于判断比赛门槛。
 
 ### 3. 全量错误分析
 

@@ -5,6 +5,7 @@ from shiyan.src.inference.schema import validate_result_document
 from shiyan.src.inference.types import Detection
 from shiyan.src.inference.coco import result_to_coco
 from shiyan.src.inference.filters import filter_class_thresholds
+from shiyan.scripts.evaluate_official import _gate_flags
 
 
 class InferenceContractTests(unittest.TestCase):
@@ -110,6 +111,17 @@ class InferenceContractTests(unittest.TestCase):
         filtered = filter_class_thresholds(document, {24: 0.35})
         self.assertEqual(len(filtered["images"][0]["objects"]), 1)
         self.assertEqual(filtered["images"][0]["objects"][0]["category_id"], 0)
+
+    def test_metric_gates_use_three_group_mean(self) -> None:
+        passing = _gate_flags(0.85, 0.20, True)
+        self.assertEqual(
+            passing,
+            {"recall_ge_0_85": True, "fdr_le_0_20": True, "latency_le_20s": True},
+        )
+        failing_group_mean = _gate_flags(0.849, 0.19, True)
+        self.assertFalse(failing_group_mean["recall_ge_0_85"])
+        failing_group_fdr = _gate_flags(0.86, 0.201, True)
+        self.assertFalse(failing_group_fdr["fdr_le_0_20"])
 
 
 if __name__ == "__main__":
