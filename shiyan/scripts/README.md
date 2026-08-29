@@ -57,6 +57,8 @@ python shiyan/scripts/filter_class_thresholds.py `
 
 该脚本只过滤指定类别，其他 24 类保持不变。它不重新运行模型，也不改变原始 `result.json`。
 
+第二轮 `INF009` 使用该工具对固定 tiled 预测做 FSC（类别 24）阈值对照。实验记录、候选范围和选择门槛见 [`INF009_class_aware_vehicle_threshold.md`](../experiments/notes/INF009_class_aware_vehicle_threshold.md)。先生成候选，再对每个候选运行 `evaluate_official.py`；未通过选择门槛前不修改 `submit/v1`、不构建 `submit/v2`。
+
 ### 5. 导出标准 COCO 检测结果
 
 ```powershell
