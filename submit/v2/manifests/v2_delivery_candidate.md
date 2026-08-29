@@ -1,6 +1,6 @@
 # v2 交付候选清单
 
-状态：**candidate，等待本地 Docker 验证**
+状态：**candidate，Windows 全量入口已验证，等待本地 Docker 验证**
 
 ## 版本边界
 
@@ -35,3 +35,15 @@ fsc-conf=0.35
 - 必须生成 `/output/result.json` 和 `/output/timings.json`；
 - 复核结果必须通过 schema、三大类平均 gate 和延迟 gate；
 - v2 验证期间不覆盖 v1 镜像、目录或官方 tag。
+
+## Windows 全量入口证据
+
+- 输入：897 张固定验证图片；
+- 输出：`submit/v2/test-output/app_full_20260830/`；
+- TP / FP / FN：`4097 / 311 / 146`；
+- Overall Recall / FDR：`0.965590 / 0.070554`；
+- Group-mean Recall / FDR：`0.882586 / 0.191804`；
+- 总耗时：`34.364042s`；
+- 最大单图耗时：`4.010357s`；
+- schema、三大类平均 gate 和延迟 gate 均通过；
+- 结果与 INF009-fsc35 离线过滤结果一致。

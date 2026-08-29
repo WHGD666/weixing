@@ -96,3 +96,12 @@ submit/v1/test-output/*
 !submit/v2/models/README.md
 !submit/v2/manifests/
 !submit/v2/manifests/*.md
+!submit/v2/test-input/
+!submit/v2/test-input/README.md
+submit/v2/test-input/*
+!submit/v2/test-input/README.md
+submit/v2/test-input-smoke/
+!submit/v2/test-output/
+!submit/v2/test-output/README.md
+submit/v2/test-output/*
+!submit/v2/test-output/README.md
