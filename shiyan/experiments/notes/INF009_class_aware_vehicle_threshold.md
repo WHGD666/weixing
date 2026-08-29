@@ -1,6 +1,6 @@
 # INF009：车辆类别感知置信度阈值对照
 
-状态：**in_progress，尚未产生用户执行结果**
+状态：**completed，选择 INF009-A（FSC threshold 0.35）作为下一版候选**
 
 这是第二轮提交实验的第一组实验。目标是在不重新训练、不修改原始标签、不改变验证集和不改变模型输出框的前提下，只对车辆大类中的 `FSC`（类别 24）做离线置信度过滤，验证能否降低车辆误检率。
 
@@ -94,6 +94,22 @@ foreach ($threshold in $thresholds) {
 
 ## 6. 结果记录要求
 
-用户执行完成后，把四个候选的以下内容发回：预测框总数、Overall TP / FP / FN、Overall Recall、Overall FDR、三大类 Recall/FDR、三项 gate，以及每个候选的 `metrics/official_metrics.md` 路径。收到结果后再补充本记录、run registry 和采用/淘汰决策。
+用户已执行完成四个候选的评估。修正后的 `evaluate_official.py` 使用三大类平均值作为 gate basis，四个候选均通过三项 gate。
 
-本轮不修改 `submit/v1`，不创建 `submit/v2`，不进行 Docker 构建，也不进行官方提交。只有候选在固定验证集上通过选择规则后，才进入 Docker 全量复核。
+| 候选 | 预测框数 | Overall Recall | Overall FDR | Group-mean Recall | Group-mean FDR | Vehicle Recall | Vehicle FDR | 决策 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| INF009-fsc30 | 4410 | 0.965590 | 0.070975 | 0.882586 | 0.196183 | 0.827160 | 0.343137 | control |
+| INF009-fsc35 | 4408 | 0.965590 | 0.070554 | 0.882586 | 0.191804 | 0.827160 | 0.330000 | **selected** |
+| INF009-fsc40 | 4403 | 0.965119 | 0.069952 | 0.874356 | 0.187067 | 0.802469 | 0.315789 | rejected: vehicle Recall loss |
+| INF009-fsc45 | 4398 | 0.964883 | 0.069122 | 0.870241 | 0.178100 | 0.790123 | 0.288889 | rejected: vehicle Recall loss |
+
+四个候选的 `recall_ge_0_85`、`fdr_le_0_20`、`latency_le_20s` 均为 `true`。`fsc35` 满足预设的选择规则：Overall Recall 不下降、三大类 Recall 不下降超过限制、vehicle Recall 不变、vehicle FDR 明确下降，并且总体 FDR 下降。
+
+## 7. INF009 决策
+
+- 采用 `INF009-fsc35` 作为 `submit/v2` 的离线后处理候选，仅提高类别 24 `FSC` 的阈值到 `0.35`。
+- 保留 `submit/v1` 作为回滚基线；不修改模型权重和原始标签。
+- 这只是固定公开验证集上的候选选择，不代表平台隐藏测试集必然同幅度改善。
+- 下一步先复制 `submit/v1` 为 `submit/v2` 并做一致性检查，再进行 Docker 全量复核；复核通过后才考虑试运行提交。
+
+本轮不修改 `submit/v1`，不进行 Docker 构建，也不进行官方提交。候选已通过固定验证集选择规则，下一轮才进入 `submit/v2` 的 Docker 全量复核。
