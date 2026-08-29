@@ -1,6 +1,6 @@
 # submit/v2：FSC 类别阈值候选交付包
 
-状态：**Windows 全量验证通过，等待 Docker 验证，尚未官方提交**
+状态：**Docker 全量验证通过，等待推送和官方试运行，尚未官方提交**
 
 这是基于 `submit/v1` 的第二轮交付候选。唯一行为变化是：在全部 tiled 检测和跨窗口 NMS 完成后，对类别 24 `FSC` 使用 score threshold `0.35`；其他类别、模型权重、输入输出接口和推理参数保持不变。
 
@@ -57,4 +57,19 @@ INF009 固定验证集结果中，`fsc35` 的 Overall Recall 为 `0.965590`，Ov
 | Max image seconds | 4.010357 |
 | 三项 gate | 全部通过 |
 
-证据目录：`submit/v2/test-output/app_full_20260830/`。下一步只做 Docker smoke 和 Docker 全量复核。
+证据目录：`submit/v2/test-output/app_full_20260830/`。该入口结果已通过，Docker 复核见下节。
+
+## Docker 全量验证
+
+使用 `linux/amd64`、GPU 和 `--network none` 完成 897 张固定验证图片复核，结果与 Windows 入口和 INF009-fsc35 完全一致：
+
+| 指标 | 结果 |
+| --- | ---: |
+| TP / FP / FN | 4097 / 311 / 146 |
+| Overall Recall / FDR | 0.965590 / 0.070554 |
+| Group-mean Recall / FDR | 0.882586 / 0.191804 |
+| Total seconds | 76.074987 |
+| Max image seconds | 1.903421 |
+| 三项 gate | 全部通过 |
+
+证据目录：`submit/v2/test-output/docker_full_20260830/`。容器启动时的 Ultralytics 配置目录 warning 不影响推理或输出；下一步是清理构建缓存、核对镜像摘要，然后再推送 `trial-v2.0`。

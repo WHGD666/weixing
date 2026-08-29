@@ -1,6 +1,6 @@
 # v2 交付候选清单
 
-状态：**candidate，Windows 全量入口已验证，等待本地 Docker 验证**
+状态：**docker_full_validated，等待推送和官方试运行**
 
 ## 版本边界
 
@@ -47,3 +47,19 @@ fsc-conf=0.35
 - 最大单图耗时：`4.010357s`；
 - schema、三大类平均 gate 和延迟 gate 均通过；
 - 结果与 INF009-fsc35 离线过滤结果一致。
+
+## Docker 全量复核
+
+- 镜像：`weixing-submission:v2`；
+- 平台：`linux/amd64`；
+- 运行：GPU，`--network none`；
+- 输入：897 张固定验证图片；
+- 输出：`submit/v2/test-output/docker_full_20260830/`；
+- TP / FP / FN：`4097 / 311 / 146`；
+- Overall Recall / FDR：`0.965590 / 0.070554`；
+- Group-mean Recall / FDR：`0.882586 / 0.191804`；
+- 总耗时：`76.074987s`；
+- 最大单图耗时：`1.903421s`；
+- schema、三大类平均 gate 和延迟 gate 均通过；
+- 结果与 Windows 入口及 INF009-fsc35 离线结果一致；
+- 当前仅完成本地复核，尚未推送 ACR，尚未官方提交。
