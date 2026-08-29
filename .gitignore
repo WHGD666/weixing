@@ -88,3 +88,11 @@ submit/v1/test-input/*
 !submit/v1/test-output/README.md
 submit/v1/test-output/*
 !submit/v1/test-output/README.md
+!submit/v2/
+!submit/v2/README.md
+!submit/v2/app/
+!submit/v2/app/*.py
+!submit/v2/models/
+!submit/v2/models/README.md
+!submit/v2/manifests/
+!submit/v2/manifests/*.md
