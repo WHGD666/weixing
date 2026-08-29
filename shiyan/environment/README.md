@@ -6,10 +6,10 @@
 
 - conda 环境名：`weixing`
 - Python：`3.10.20`
-- 当前包状态：只有 Python、pip、setuptools、wheel 和系统基础运行库
+- 当前包状态：已完成训练、推理、评估和 Docker 交付所需依赖安装与验证
 - 本机训练卡：NVIDIA GeForce RTX 4060 Laptop GPU，8GB 独显显存
 
-这个状态是一个合适的起点。后续环境应按阶段安装，先保证 baseline 可跑通，再补充大图推理、融合和研究型框架。
+这个环境已经完成第一轮训练、推理、评估和 Docker 候选验证。后续如需调整依赖，应新增版本记录，不覆盖本轮已验证的环境锁定文件。
 
 ## 推荐安装方式
 
@@ -61,7 +61,7 @@ python -c "import cv2, numpy, pandas, pycocotools; print('basic imports ok')"
 
 ## 环境冻结
 
-第一次完整安装并验证通过后，保存实际版本：
+第一次完整安装并验证通过后，保存实际版本。本轮已保存：
 
 ```powershell
 python -m pip freeze > shiyan/environment/locks/weixing-pip-freeze.txt

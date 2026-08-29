@@ -1,6 +1,8 @@
 # Metric Contract v0
 
-状态：draft，等待评估脚本实现和样例校验后冻结。
+状态：已实现，等待用户执行样例校验后冻结。
+
+实现入口：`shiyan/scripts/evaluate_official.py`
 
 ## 主要指标
 

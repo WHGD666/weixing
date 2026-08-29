@@ -11,7 +11,7 @@
 | GPU | NVIDIA GeForce RTX 4060 Laptop GPU |
 | 独显显存 | 8GB |
 | 内存 | 约 32GB |
-| 当前状态 | 仅基础 Python/conda 环境，尚未安装深度学习库 |
+| 当前状态 | `weixing` 环境已用于训练、推理、评估和 Docker 交付准备；完整版本以 locks 目录为准 |
 
 ## 对比赛实验的影响
 

@@ -2,7 +2,7 @@
 
 Docker 封装与评测系统资料目录。
 
-当前已放入比赛方提供的 Dockerfile、Docker 封装说明、评测系统使用手册和答疑记录。现阶段这些文件主要作为交付接口依据；正式推理代码、模型权重和 Linux `environment.yml` 等到 baseline 和推理流程稳定后再整理。
+当前已放入比赛方提供的 Dockerfile、Docker 封装说明、评测系统使用手册和答疑记录。`submit/v1` 已完成推理代码、Linux `environment.yml`、模型构建上下文和 Docker 本地全量验证；本目录继续作为官方约束和评测流程的资料区。
 
 重点记录：
 
@@ -12,3 +12,18 @@ Docker 封装与评测系统资料目录。
 - 推理入口和模型权重位置。
 - 本地 Docker 冒烟测试命令。
 - ACR 镜像 tag、push 和评测提交流程。
+
+当前准备策略：
+
+- Windows + Conda 继续负责训练和实验；
+- Docker Desktop 的 Linux 容器引擎负责后续镜像构建与运行验证；
+- 不强制额外安装 Ubuntu WSL；
+- 最终 environment.yml 仍必须对应 Linux x86_64，并通过容器实际验证。
+
+当前 Docker 状态：
+
+- 镜像：`weixing-submission:v1`；
+- 架构：`linux/amd64`；
+- GPU + `--network none` 全量处理 897 张图片；
+- 内部 Recall/FDR/Latency 三项门槛均通过；
+- ACR push 和官方封闭测试尚未完成。

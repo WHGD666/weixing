@@ -1,0 +1,10 @@
+.git/
+.gitignore
+.obsidian/
+__pycache__/
+*.py[cod]
+*.log
+test-input/
+test-output/
+README.md
+manifests/

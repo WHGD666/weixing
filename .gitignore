@@ -68,3 +68,23 @@ tensorboard/
 Thumbs.db
 .vscode/
 .idea/
+
+# Docker delivery workspace: keep the skeleton and docs, ignore local payloads
+!submit/
+!submit/README.md
+!submit/v1/
+!submit/v1/README.md
+!submit/v1/app/
+!submit/v1/app/README.md
+!submit/v1/models/
+!submit/v1/models/README.md
+!submit/v1/manifests/
+!submit/v1/manifests/README.md
+!submit/v1/test-input/
+!submit/v1/test-input/README.md
+submit/v1/test-input/*
+!submit/v1/test-input/README.md
+!submit/v1/test-output/
+!submit/v1/test-output/README.md
+submit/v1/test-output/*
+!submit/v1/test-output/README.md
