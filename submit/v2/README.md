@@ -1,6 +1,6 @@
 # submit/v2：FSC 类别阈值候选交付包
 
-状态：**Docker 全量验证通过，等待推送和官方试运行，尚未官方提交**
+状态：**官方试运行已完成，结果已归档**
 
 这是基于 `submit/v1` 的第二轮交付候选。唯一行为变化是：在全部 tiled 检测和跨窗口 NMS 完成后，对类别 24 `FSC` 使用 score threshold `0.35`；其他类别、模型权重、输入输出接口和推理参数保持不变。
 
@@ -72,4 +72,8 @@ INF009 固定验证集结果中，`fsc35` 的 Overall Recall 为 `0.965590`，Ov
 | Max image seconds | 1.903421 |
 | 三项 gate | 全部通过 |
 
-证据目录：`submit/v2/test-output/docker_full_20260830/`。容器启动时的 Ultralytics 配置目录 warning 不影响推理或输出；下一步是清理构建缓存、核对镜像摘要，然后再推送 `trial-v2.0`。
+证据目录：`submit/v2/test-output/docker_full_20260830/`。容器启动时的 Ultralytics 配置目录 warning 不影响推理或输出。
+
+## 官方试运行结果
+
+`trial-v2.0` 已完成官方试运行，提交 ID 为 `2750`，状态为 `ACCEPTED`，任务已完成并计入成绩。综合分为 `84.8310`，排名第 42。相对 `trial-v1.0` 的 `84.3313`，分数提升 `0.4997`；vehicle FDR 从 `0.274611` 降至 `0.244565`，vehicle Recall 从 `0.939597` 降至 `0.932886`。详细记录见 `shiyan/submissions/official_feedback/SUB002_trial_2750.md`。

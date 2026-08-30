@@ -1,6 +1,6 @@
 # v2 交付候选清单
 
-状态：**docker_full_validated，等待推送和官方试运行**
+状态：**official_trial_completed，结果已归档**
 
 ## 版本边界
 
@@ -62,4 +62,14 @@ fsc-conf=0.35
 - 最大单图耗时：`1.903421s`；
 - schema、三大类平均 gate 和延迟 gate 均通过；
 - 结果与 Windows 入口及 INF009-fsc35 离线结果一致；
-- 当前仅完成本地复核，尚未推送 ACR，尚未官方提交。
+- 当前已完成本地复核、ACR 推送和官方试运行，结果已归档。
+
+## 官方结果
+
+- 官方 tag：`trial-v2.0`；
+- 提交 ID：`2750`；
+- 状态：`ACCEPTED`，任务已完成并计入成绩；
+- 综合分：`84.8310`；
+- 综合排名：第 42 名；
+- 相对 v1 分数变化：`+0.4997`；
+- 详细证据：`shiyan/submissions/official_feedback/SUB002_trial_2750.md`。
