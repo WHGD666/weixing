@@ -5,7 +5,7 @@ from shiyan.src.inference.schema import validate_result_document
 from shiyan.src.inference.types import Detection
 from shiyan.src.inference.coco import result_to_coco
 from shiyan.src.inference.filters import filter_class_thresholds
-from shiyan.scripts.evaluate_official import _gate_flags
+from shiyan.scripts.evaluate_official import _gate_flags, _score_components
 
 
 class InferenceContractTests(unittest.TestCase):
@@ -122,6 +122,12 @@ class InferenceContractTests(unittest.TestCase):
         self.assertFalse(failing_group_mean["recall_ge_0_85"])
         failing_group_fdr = _gate_flags(0.86, 0.201, True)
         self.assertFalse(failing_group_fdr["fdr_le_0_20"])
+
+    def test_published_score_formula(self) -> None:
+        score = _score_components(0.944987666666667, 0.143308666666667, 1.837167)
+        self.assertAlmostEqual(score["total_score"], 84.3313257, places=5)
+        score_v2 = _score_components(0.942750666666667, 0.133293333333333, 1.791)
+        self.assertAlmostEqual(score_v2["total_score"], 84.8309481, places=5)
 
 
 if __name__ == "__main__":

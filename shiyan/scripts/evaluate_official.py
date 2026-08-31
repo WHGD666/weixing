@@ -113,6 +113,26 @@ def _gate_flags(recall: float | None, fdr: float | None, latency_pass: object) -
     }
 
 
+def _score_components(recall: float, fdr: float, seconds: float) -> dict[str, float]:
+    """Reproduce the published online score from three-group mean metrics."""
+
+    if not 0.0 <= recall <= 1.0:
+        raise ValueError("recall must be in [0, 1]")
+    if not 0.0 <= fdr <= 1.0:
+        raise ValueError("fdr must be in [0, 1]")
+    if seconds < 0.0:
+        raise ValueError("seconds must be non-negative")
+    recall_score = recall / 0.85 * 60.0 if recall <= 0.85 else 60.0 + (recall - 0.85) / 0.15 * 40.0
+    fdr_score = 100.0 - fdr / 0.2 * 40.0 if fdr <= 0.2 else 60.0 - (fdr - 0.2) / 0.8 * 60.0
+    time_score = 100.0 - seconds / 20.0 * 40.0 if seconds <= 20.0 else 0.0
+    return {
+        "recall_score": recall_score,
+        "fdr_score": fdr_score,
+        "time_score": time_score,
+        "total_score": (recall_score + fdr_score + time_score) / 3.0,
+    }
+
+
 def evaluate(prediction_path: Path, image_list_path: Path, timings_path: Path | None) -> dict[str, object]:
     image_paths = read_image_list(image_list_path)
     document = json.loads(prediction_path.read_text(encoding="utf-8"))
@@ -166,12 +186,35 @@ def evaluate(prediction_path: Path, image_list_path: Path, timings_path: Path | 
     timing_summary: dict[str, object] = {"available": False}
     if timings_path is not None:
         timing_document = json.loads(timings_path.read_text(encoding="utf-8"))
+        image_count = int(timing_document["image_count"])
+        total_seconds = float(timing_document["total_seconds"])
         timing_summary = {
             "available": True,
-            "image_count": timing_document["image_count"],
-            "total_seconds": timing_document["total_seconds"],
+            "image_count": image_count,
+            "total_seconds": total_seconds,
+            "average_image_seconds": total_seconds / image_count if image_count else None,
             "max_image_seconds": timing_document["max_image_seconds"],
             "pass_latency_20s": float(timing_document["max_image_seconds"]) <= 20.0,
+        }
+
+    score_estimate: dict[str, object] = {"available": False}
+    if (
+        group_mean["recall"] is not None
+        and group_mean["fdr"] is not None
+        and timing_summary.get("available")
+        and timing_summary.get("average_image_seconds") is not None
+    ):
+        score_estimate = {
+            "available": True,
+            "scope": "internal_formula_reproduction",
+            "recall_input": group_mean["recall"],
+            "fdr_input": group_mean["fdr"],
+            "time_input_seconds": timing_summary["average_image_seconds"],
+            **_score_components(
+                float(group_mean["recall"]),
+                float(group_mean["fdr"]),
+                float(timing_summary["average_image_seconds"]),
+            ),
         }
 
     return {
@@ -188,6 +231,7 @@ def evaluate(prediction_path: Path, image_list_path: Path, timings_path: Path | 
         "group_mean": group_mean,
         "per_class": per_class,
         "timing": timing_summary,
+        "score_estimate": score_estimate,
         "gate_basis": "three_group_macro_mean",
         "gates": _gate_flags(
             group_mean["recall"], group_mean["fdr"], timing_summary.get("pass_latency_20s")
@@ -208,6 +252,7 @@ def _write_outputs(metrics: dict[str, object], output_dir: Path) -> None:
     overall = metrics["overall"]
     group_mean = metrics["group_mean"]
     timing = metrics["timing"]
+    score_estimate = metrics["score_estimate"]
     lines = [
         "# Internal Official-Metric Evaluation",
         "",
@@ -221,6 +266,7 @@ def _write_outputs(metrics: dict[str, object], output_dir: Path) -> None:
         f"- Group-mean FDR (rigid-gate basis): {group_mean['fdr']}",
         f"- Gates (three-group mean): {metrics['gates']}",
         f"- Timing: {timing}",
+        f"- Internal published-score formula estimate: {score_estimate}",
         "",
         "| Group | Recall | FDR | TP | FP | FN |",
         "| --- | ---: | ---: | ---: | ---: | ---: |",

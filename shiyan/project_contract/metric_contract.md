@@ -1,6 +1,6 @@
 # Metric Contract v0
 
-状态：已实现，等待用户执行样例校验后冻结。
+状态：已实现；线上评分公式见 `score_contract.md`。
 
 实现入口：`shiyan/scripts/evaluate_official.py`
 
@@ -39,3 +39,7 @@ FDR = FP / (FP + TP)
 - 刚性 Recall/FDR gate 采用 ship、aircraft、vehicle 三大类指标的算术平均，即 `group_mean`。
 - `evaluate_official.py` 同时保留 pooled gate 诊断值，但输出的 `gates` 使用三大类平均值，并明确写入 `gate_basis`。
 - 该脚本是公开规则基础上的内部复现，不等同于比赛方封闭测试评测器；隐藏测试集上的最终分数仍以平台结果为准。
+
+## 线上综合分
+
+平台更新公示的 Recall/FDR/Inference Time 分段得分和历史官方分数校验，见 [`score_contract.md`](score_contract.md)。本地评估使用三大类平均 Recall/FDR 生成同口径的内部公式复现，不把它写成官方隐藏测试成绩。
