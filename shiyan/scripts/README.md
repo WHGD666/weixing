@@ -28,7 +28,22 @@ python shiyan/scripts/evaluate_official.py `
   --output-dir runs/test/exp001_baseline_sample/metrics
 ```
 
-这一步使用项目的 Metric Contract v0：FSC 使用 IoU 0.35，舰船和飞机使用 IoU 0.50，按置信度从高到低匹配，并统计 25 类及三大类的 TP、FP、FN、Recall、FDR。刚性 gate 使用三大类 Recall/FDR 的算术平均；pooled Overall 指标仅作诊断。抽样结果只能用于排查流程，不能用于判断比赛门槛。
+这一步使用项目的 Metric Contract v0：FSC 使用 IoU 0.35，舰船和飞机使用 IoU 0.50，按置信度从高到低匹配，并统计 25 类及三大类的 TP、FP、FN、Recall、FDR。输出会同时记录历史兼容的三大类 pooled 平均、按细分类别宏平均的候选口径和对应 gate；抽样结果只能用于排查流程，不能用于判断比赛门槛。
+
+可用 `--label-version`、`--split-version`、`--experiment-id`、`--run-id` 写入实验元数据，便于训练后验收时确认结果来自同一数据和同一实验。
+
+### 2.1 新旧模型同条件对照
+
+训练完成后，新旧模型必须使用同一验证集清单、同一标签版本、同一推理参数和同一评估脚本。分别评估后，用下面的脚本生成差值报告：
+
+```powershell
+python shiyan/scripts/compare_official_metrics.py `
+  --baseline runs/test/exp002_old_model_data2/metrics/official_metrics.json `
+  --candidate runs/test/exp002_new_model_data2/metrics/official_metrics.json `
+  --output-dir runs/test/exp002_model_comparison
+```
+
+它会生成 `comparison.json`、`comparison.csv` 和 `comparison.md`，同时比较 Overall、三大类、两种宏平均口径以及 gate 候选。只有验证集数量、Metric Contract、IoU 规则和数据版本一致时，差值才有意义。
 
 ### 3. 全量错误分析
 

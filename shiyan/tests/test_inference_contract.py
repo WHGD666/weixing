@@ -5,7 +5,8 @@ from shiyan.src.inference.schema import validate_result_document
 from shiyan.src.inference.types import Detection
 from shiyan.src.inference.coco import result_to_coco
 from shiyan.src.inference.filters import filter_class_thresholds
-from shiyan.scripts.evaluate_official import _gate_flags, _score_components
+from shiyan.scripts.compare_official_metrics import build_comparison
+from shiyan.scripts.evaluate_official import _class_macro, _gate_flags, _score_components, _threshold
 
 
 class InferenceContractTests(unittest.TestCase):
@@ -128,6 +129,47 @@ class InferenceContractTests(unittest.TestCase):
         self.assertAlmostEqual(score["total_score"], 84.3313257, places=5)
         score_v2 = _score_components(0.942750666666667, 0.133293333333333, 1.791)
         self.assertAlmostEqual(score_v2["total_score"], 84.8309481, places=5)
+
+    def test_class_macro_does_not_pool_subclasses(self) -> None:
+        rows = [
+            {"recall": 1.0, "fdr": 0.0},
+            {"recall": 0.0, "fdr": 1.0},
+        ]
+        macro = _class_macro(rows)
+        self.assertEqual(macro["recall"], 0.5)
+        self.assertEqual(macro["fdr"], 0.5)
+        self.assertEqual(macro["metric_count"], 2)
+
+    def test_metric_comparison_reports_candidate_delta(self) -> None:
+        baseline = {
+            "image_count": 2,
+            "overall": {"recall": 0.8, "fdr": 0.2},
+            "group_mean": {"recall": 0.8, "fdr": 0.2},
+            "three_group_macro": {"recall": 0.8, "fdr": 0.2},
+            "groups": {
+                "ship": {"recall": 0.7, "fdr": 0.3},
+                "aircraft": {"recall": 0.9, "fdr": 0.1},
+                "vehicle": {"recall": 0.8, "fdr": 0.2},
+            },
+        }
+        candidate = {
+            **baseline,
+            "overall": {"recall": 0.85, "fdr": 0.15},
+        }
+        comparison = build_comparison(baseline, candidate)
+        overall_recall = next(row for row in comparison["rows"] if row["metric"] == "overall.recall")
+        self.assertAlmostEqual(overall_recall["delta"], 0.05)
+        self.assertTrue(comparison["compatibility"]["valid"])
+
+        mismatched = {**candidate, "image_count": 3}
+        mismatch_report = build_comparison(baseline, mismatched)
+        self.assertFalse(mismatch_report["compatibility"]["valid"])
+        self.assertFalse(mismatch_report["compatibility"]["checks"]["image_count_equal"])
+
+    def test_official_iou_thresholds_follow_class_groups(self) -> None:
+        self.assertEqual(_threshold(24), 0.35)
+        self.assertEqual(_threshold(0), 0.50)
+        self.assertEqual(_threshold(4), 0.50)
 
 
 if __name__ == "__main__":

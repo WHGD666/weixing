@@ -6,7 +6,7 @@ import argparse
 import csv
 import json
 import sys
-from collections.abc import Iterable
+from collections.abc import Iterable, Sequence
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -105,6 +105,27 @@ def _aggregate(stats: Iterable[dict[str, int]]) -> dict[str, object]:
     }
 
 
+def _mean_metric_values(metrics: Iterable[dict[str, object]]) -> dict[str, object]:
+    """Average already-computed Recall/FDR values without pooling counts."""
+
+    items = list(metrics)
+    recalls = [float(item["recall"]) for item in items if item.get("recall") is not None]
+    fdrs = [float(item["fdr"]) for item in items if item.get("fdr") is not None]
+    return {
+        "recall": sum(recalls) / len(recalls) if recalls else None,
+        "fdr": sum(fdrs) / len(fdrs) if fdrs else None,
+        "metric_count": len(items),
+        "recall_defined_count": len(recalls),
+        "fdr_defined_count": len(fdrs),
+    }
+
+
+def _class_macro(rows: Sequence[dict[str, object]]) -> dict[str, object]:
+    """Average per-class metrics, preserving the official sub-class detail."""
+
+    return _mean_metric_values(rows)
+
+
 def _gate_flags(recall: float | None, fdr: float | None, latency_pass: object) -> dict[str, object]:
     return {
         "recall_ge_0_85": recall is not None and float(recall) >= 0.85,
@@ -133,7 +154,12 @@ def _score_components(recall: float, fdr: float, seconds: float) -> dict[str, fl
     }
 
 
-def evaluate(prediction_path: Path, image_list_path: Path, timings_path: Path | None) -> dict[str, object]:
+def evaluate(
+    prediction_path: Path,
+    image_list_path: Path,
+    timings_path: Path | None,
+    metadata: dict[str, str] | None = None,
+) -> dict[str, object]:
     image_paths = read_image_list(image_list_path)
     document = json.loads(prediction_path.read_text(encoding="utf-8"))
     validate_result_document(document, [path.name for path in image_paths])
@@ -176,12 +202,18 @@ def evaluate(prediction_path: Path, image_list_path: Path, timings_path: Path | 
         "vehicle": _aggregate(class_stats[index] for index in sorted(VEHICLE_CLASS_IDS)),
     }
     overall = _aggregate(class_stats)
+    group_class_macro = {
+        "ship": _class_macro([per_class[index] for index in sorted(SHIP_CLASS_IDS)]),
+        "aircraft": _class_macro([per_class[index] for index in sorted(AIRCRAFT_CLASS_IDS)]),
+        "vehicle": _class_macro([per_class[index] for index in sorted(VEHICLE_CLASS_IDS)]),
+    }
     valid_group_recalls = [float(item["recall"]) for item in groups.values() if item["recall"] is not None]
     valid_group_fdrs = [float(item["fdr"]) for item in groups.values() if item["fdr"] is not None]
     group_mean = {
         "recall": sum(valid_group_recalls) / len(valid_group_recalls) if valid_group_recalls else None,
         "fdr": sum(valid_group_fdrs) / len(valid_group_fdrs) if valid_group_fdrs else None,
     }
+    three_group_macro = _mean_metric_values(group_class_macro.values())
 
     timing_summary: dict[str, object] = {"available": False}
     if timings_path is not None:
@@ -190,6 +222,7 @@ def evaluate(prediction_path: Path, image_list_path: Path, timings_path: Path | 
         total_seconds = float(timing_document["total_seconds"])
         timing_summary = {
             "available": True,
+            "scope": "internal_per_image_timing_proxy",
             "image_count": image_count,
             "total_seconds": total_seconds,
             "average_image_seconds": total_seconds / image_count if image_count else None,
@@ -222,17 +255,34 @@ def evaluate(prediction_path: Path, image_list_path: Path, timings_path: Path | 
         "official_hidden_test": False,
         "metric_contract": "Metric Contract v0",
         "iou_thresholds": {"vehicle": 0.35, "ship_and_aircraft": 0.50},
+        "evaluation_metadata": metadata or {},
         "image_count": len(image_paths),
         "overall": overall,
         "pooled_overall_gates": _gate_flags(
             overall["recall"], overall["fdr"], timing_summary.get("pass_latency_20s")
         ),
         "groups": groups,
+        "group_class_macro": group_class_macro,
         "group_mean": group_mean,
+        "three_group_macro": three_group_macro,
         "per_class": per_class,
         "timing": timing_summary,
         "score_estimate": score_estimate,
-        "gate_basis": "three_group_macro_mean",
+        "gate_basis": "group_pooled_mean_legacy_compatible",
+        "gate_candidates": {
+            "pooled_overall": _gate_flags(
+                overall["recall"], overall["fdr"], timing_summary.get("pass_latency_20s")
+            ),
+            "group_pooled_mean": _gate_flags(
+                group_mean["recall"], group_mean["fdr"], timing_summary.get("pass_latency_20s")
+            ),
+            "group_class_macro_mean": _gate_flags(
+                three_group_macro["recall"],
+                three_group_macro["fdr"],
+                timing_summary.get("pass_latency_20s"),
+            ),
+        },
+        # Keep the historical key stable until the organizer confirms aggregation.
         "gates": _gate_flags(
             group_mean["recall"], group_mean["fdr"], timing_summary.get("pass_latency_20s")
         ),
@@ -251,6 +301,7 @@ def _write_outputs(metrics: dict[str, object], output_dir: Path) -> None:
         writer.writerows(metrics["per_class"])
     overall = metrics["overall"]
     group_mean = metrics["group_mean"]
+    three_group_macro = metrics["three_group_macro"]
     timing = metrics["timing"]
     score_estimate = metrics["score_estimate"]
     lines = [
@@ -264,7 +315,10 @@ def _write_outputs(metrics: dict[str, object], output_dir: Path) -> None:
         f"- Overall FDR: {overall['fdr']}",
         f"- Group-mean Recall (rigid-gate basis): {group_mean['recall']}",
         f"- Group-mean FDR (rigid-gate basis): {group_mean['fdr']}",
-        f"- Gates (three-group mean): {metrics['gates']}",
+        f"- Gates (historical group-pooled mean): {metrics['gates']}",
+        f"- Group-class-macro Recall (alternative basis): {three_group_macro['recall']}",
+        f"- Group-class-macro FDR (alternative basis): {three_group_macro['fdr']}",
+        f"- Gate candidates: {metrics['gate_candidates']}",
         f"- Timing: {timing}",
         f"- Internal published-score formula estimate: {score_estimate}",
         "",
@@ -282,10 +336,24 @@ def main() -> None:
     parser.add_argument("--image-list", required=True)
     parser.add_argument("--output-dir", required=True)
     parser.add_argument("--timings")
+    parser.add_argument("--label-version")
+    parser.add_argument("--split-version")
+    parser.add_argument("--experiment-id")
+    parser.add_argument("--run-id")
     args = parser.parse_args()
     prediction_path = Path(args.predictions)
     timings_path = Path(args.timings) if args.timings else None
-    metrics = evaluate(prediction_path, Path(args.image_list), timings_path)
+    metadata = {
+        key: value
+        for key, value in {
+            "label_version": args.label_version,
+            "split_version": args.split_version,
+            "experiment_id": args.experiment_id,
+            "run_id": args.run_id,
+        }.items()
+        if value
+    }
+    metrics = evaluate(prediction_path, Path(args.image_list), timings_path, metadata)
     _write_outputs(metrics, Path(args.output_dir))
     print(json.dumps(metrics["gates"], ensure_ascii=False))
     print(f"metrics={Path(args.output_dir) / 'official_metrics.json'}")
