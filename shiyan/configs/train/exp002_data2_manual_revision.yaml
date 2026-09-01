@@ -7,7 +7,7 @@ mode: train
 model: submit/v2/models/best.pt
 data: shiyan/configs/dataset/weixing_data2_v1_audited.yaml
 
-epochs: 80
+epochs: 55
 patience: 20
 batch: 4
 imgsz: 1024

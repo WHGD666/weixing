@@ -1,6 +1,6 @@
 # AUDIT003：data2 第一轮人工修订入训准备
 
-状态：**preflight_pending，尚未训练**
+状态：**ready_for_training，尚未训练**
 
 本记录对应 2026-09-01 的第一轮人工标签修订。用户已完成前 1360 张图片的人工检查和微调，主要关注舰船与 FSC/导弹车；没有进行大规模新增标注。原始 `shiyan/data` 和 `v0_original` 保持只读，`shiyan/data2` 是人工修改工作副本。
 
@@ -17,7 +17,7 @@
 | 类别数 | `25` |
 | 原始标签版本 | `v0_original` |
 | 候选标签版本 | `v1_manual_revision_candidate` |
-| 训练状态 | 未开始，等待空标签补齐和机器验收 |
+| 训练状态 | 未开始，机器验收和划分映射已通过 |
 
 ## 2. 已发现的文件级问题
 
@@ -78,7 +78,7 @@ ok=true images=4481 labels=4481 classes=25
 python shiyan/scripts/prepare_data2_split.py
 ```
 
-预期输出为 JSON，且 `image_count=4481`，`split_counts.train + split_counts.val = 4481`。该脚本只生成基于固定 `v1_scene_80_20` 的新文件清单，不改变图片和标签。
+实际输出为 `image_count=4481`，训练集 `3584` 张，验证集 `897` 张。该脚本只生成基于固定 `v1_scene_80_20` 的新文件清单，不改变图片和标签。
 
 ### 4.4 检查训练配置
 
@@ -89,13 +89,13 @@ Get-Content shiyan/configs/train/exp002_data2_manual_revision.yaml
 
 ## 5. 训练命令
 
-完成 4.1 至 4.4 且验收通过后，再由项目成员启动第一轮训练：
+完成 4.1 至 4.4 且验收通过后，再由项目成员启动第一轮训练。已按项目成员要求将训练上限调整为 55 轮：
 
 ```powershell
 yolo detect train cfg=shiyan/configs/train/exp002_data2_manual_revision.yaml
 ```
 
-本配置从已保存的 `submit/v2/models/best.pt` 继续学习，不下载新的 `yolo11s.pt`，输入尺寸 `1024`、batch `4`、GPU `0`、最多 80 轮。若 RTX 4060 Laptop 显存不足，只把命令改为：
+本配置从已保存的 `submit/v2/models/best.pt` 继续学习，不下载新的 `yolo11s.pt`，输入尺寸 `1024`、batch `4`、GPU `0`、最多 55 轮。若 RTX 4060 Laptop 显存不足，只把命令改为：
 
 ```powershell
 yolo detect train cfg=shiyan/configs/train/exp002_data2_manual_revision.yaml batch=2
@@ -116,4 +116,4 @@ yolo detect train cfg=shiyan/configs/train/exp002_data2_manual_revision.yaml bat
 
 ## 7. 当前判断
 
-这轮修改的方向与正式提交暴露的问题一致：集中在舰船和 FSC，而不是盲目改动全部类别；从类别总量看没有大量新增框，主要是删框、类别调整和框微调。当前唯一明确的硬阻塞是 4 个空标签文件尚未落盘。完成文件补齐并通过验收后，才进入 `EXP002` 训练。
+这轮修改的方向与正式提交暴露的问题一致：集中在舰船和 FSC，而不是盲目改动全部类别；从类别总量看没有大量新增框，主要是删框、类别调整和框微调。4 个空标签已补齐，机器验收和固定划分映射均已通过，当前可以进入 `EXP002` 训练。
