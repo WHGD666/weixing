@@ -1,0 +1,35 @@
+# EXP002: first training candidate after the first 1360 labels were manually revised.
+# Run from the repository root after data2 preflight passes.
+
+task: detect
+mode: train
+
+model: submit/v2/models/best.pt
+data: shiyan/configs/dataset/weixing_data2_v1_audited.yaml
+
+epochs: 80
+patience: 20
+batch: 4
+imgsz: 1024
+device: 0
+workers: 4
+
+project: runs/train
+name: exp002_data2_manual_revision
+exist_ok: false
+
+pretrained: false
+optimizer: auto
+seed: 20260901
+deterministic: true
+single_cls: false
+rect: false
+cos_lr: true
+close_mosaic: 10
+amp: true
+cache: false
+plots: true
+save: true
+save_period: -1
+val: true
+verbose: true
