@@ -106,6 +106,24 @@ soft：
 
 因此 soft 版本不能作为提交候选。它证明颜色信息对船只 Recall 有一定可利用信号，但当前阈值力度过大，不能满足三项刚性指标。
 
+### 5.3 gray027 候选
+
+在相同 v2 权重、固定验证集和推理流程下，进一步测试黑白图船只阈值 `0.27`、彩色图船只阈值 `0.60`，飞机阈值 `0.30`、FSC 阈值 `0.35`。该版本的官方口径复现结果为：
+
+| 指标 | gray027 |
+| --- | ---: |
+| ship Recall | 0.8346007605 |
+| ship FDR | 0.2216312057 |
+| aircraft Recall | 0.9878987899 |
+| aircraft FDR | 0.0446808511 |
+| vehicle Recall | 0.8271604938 |
+| vehicle FDR | 0.3300000000 |
+| 宏平均 Recall | 0.8832200147 |
+| 宏平均 FDR | 0.1987706856 |
+| 最大单图耗时 | 5.190938 s |
+
+gray027 在本地三项 gate 上通过，且比 `0.20` 阈值的 soft 版本明显降低了宏平均 FDR；但船只 Recall 仍低于 `0.85`，其通过主要依靠飞机和 vehicle 的分组表现。它是当前颜色策略的可复测候选，不是隐藏测试保证，更不能直接等同正式提交结果。
+
 ## 6. 本实验能说明什么
 
 可以确认的内容：
@@ -170,6 +188,7 @@ EXP002 中 `pretrained:false` 导致实际从头训练。下一次比较原始�
 runs/test/EXP003_v2_modality_smoke/
 runs/test/EXP003_v2_modality_control/
 runs/test/EXP003_v2_modality_soft/
+runs/test/EXP003_v2_modality_gray027/
 ```
 
 关键文件：
@@ -179,4 +198,5 @@ shiyan/scripts/run_v2_modality_experiment.py
 runs/test/EXP003_v2_modality_control/metrics/official_metrics.json
 runs/test/EXP003_v2_modality_soft/metrics/official_metrics.json
 runs/test/EXP003_v2_modality_soft/modality_by_image.csv
+runs/test/EXP003_v2_modality_gray027/metrics/official_metrics.json
 ```
