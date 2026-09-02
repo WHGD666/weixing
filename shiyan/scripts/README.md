@@ -105,6 +105,37 @@ python shiyan/scripts/test_inference.py `
 
 可执行命令入口位置。正式实验记录中应写明从哪个脚本启动。
 
+### 8. v2 图像模态辅助诊断
+
+该实验固定使用当前最高分 v2 模型 `submit/v2/models/best.pt` 和 v2 的 tiled `Detector`，只在模型输出之后按整张图的黑白/彩色特征调整类别阈值，不修改标签，也不修改 `submit/v2`。默认策略是：黑白图降低船只阈值，彩色图提高船只阈值；飞机和 FSC 保持 v2 的阈值。
+
+先用 12 张固定图片检查流程：
+
+```powershell
+python shiyan/scripts/run_v2_modality_experiment.py `
+  --model submit/v2/models/best.pt `
+  --image-list shiyan/data_registry/split_assignments/v1_scene_80_20/val.txt `
+  --output-dir runs/test/EXP003_v2_modality_smoke `
+  --sample-count 12
+```
+
+`--sample-count 12` 会从固定清单中均匀抽取 12 张图；省略该参数或设置为 `0` 就运行清单中的全部图片。全量运行命令：
+
+```powershell
+python shiyan/scripts/run_v2_modality_experiment.py `
+  --model submit/v2/models/best.pt `
+  --image-list shiyan/data_registry/split_assignments/v1_scene_80_20/val.txt `
+  --output-dir runs/test/EXP003_v2_modality_soft `
+  --strategy soft `
+  --conf 0.10 `
+  --ship-gray-conf 0.20 `
+  --ship-color-conf 0.60 `
+  --aircraft-conf 0.30 `
+  --fsc-conf 0.35
+```
+
+脚本会生成 `result.json`、`timings.json`、`image_list.txt`、`modality_by_image.csv` 和 `modality_summary.json`。评估方式与普通候选相同：将这些结果交给 `evaluate_official.py`。`--strategy strict` 会把彩色图中的船只预测全部删除，只作为压力对照，不作为默认提交方案。若需要严格复现 v2 基线，应直接评估已有 v2 结果，不把这个诊断脚本的结果冒充 v2 基线。
+
 目录：
 
 - `audit/`：数据审计。
