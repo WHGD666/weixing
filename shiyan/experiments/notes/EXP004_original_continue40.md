@@ -1,6 +1,6 @@
 # EXP004：原始标签模型权重继续训练 40 轮
 
-状态：**training_completed，待完成官方口径推理验收；未提交平台**
+状态：**internal_validation_completed，待 Docker 验收；未提交平台**
 
 本实验沿着 EXP003 的颜色后处理实验并行推进，单独回答一个问题：在不使用 `data2` 人工修订标签、不加入颜色策略的前提下，使用第一次原始标签训练得到的模型作为初始权重，再训练 40 轮，模型本身是否会改善。
 
@@ -137,3 +137,97 @@ FSC、MS、QHS 的内部召回仍明显低于强类别，说明继续训练并�
 2. 对同一个 EXP004 预测使用 EXP003 的 `gray027` 策略，再评估一次。
 
 两次结果完成后，和 EXP003 已记录的原始 v2、原始 v2+`gray027` 对照。若四格中任一候选只是在本地门槛附近通过，不直接提交，先保留隐藏测试分布风险和类别级安全余量。
+
+## 8. 全量本地验收结果
+
+用户已完成 12 张 tiled 冒烟、897 张 tiled 全量推理、EXP004 control、EXP004 `gray027` 和错误分析。三项 gate 使用项目当前的历史兼容口径：三大类分组 pooled Recall/FDR 的算术平均，以及最大单图时间。
+
+### 8.1 12 张 tiled 冒烟
+
+```text
+validated_images = 12
+validated_objects = 48
+total_seconds = 6.164 s
+max_image_seconds = 5.593 s
+gate = Recall/FDR/latency 全部通过
+```
+
+冒烟测试说明模型、tiled 推理、结果 schema 和时间记录均能正常工作；12 张样本不用于候选选择。
+
+全量结果证据哈希：
+
+| 产物 | SHA256 |
+| --- | --- |
+| raw tiled `result.json` | `822F87346A903F78CF6D53F9C0F0FA66A56482AC700AFA54330C37615723B92E` |
+| raw tiled `timings.json` | `741178F405DD6E45C34B74AD8C7C36E2C21733FDF24F712F54918BA3EC4A265B` |
+| raw tiled `official_metrics.json` | `F11063085EBE6EEBA0B0624B8F211BDDEAC6E0BB0B566957AD26C4209C84DBA6` |
+| control `result.json` | `35C8BBCE55C0FF0BF3259788F7248DD364F92AD711A0A903AC21B1042048AD2D` |
+| control `timings.json` | `1086896B4C08B4B675249A93E2D3BE8E89786C3ECB24FB5E2E6A599EC2288278` |
+| control `official_metrics.json` | `B098A4C005122825149991CFEA2936CD219073856075D24EF2363D777ACD64D3` |
+| gray027 `result.json` | `CF68576EC7EAA9618F9E54305C8894776CE1AB750A887F10C93BF98F6C7AE59A` |
+| gray027 `timings.json` | `933EA9E204B13D0CA93A152594C74648DF12261563A122062025578DA3B5719A` |
+| gray027 `official_metrics.json` | `9A5D9EC46CB25362EECD3A830312F8EE8421890DAF75D0AB01A87799A4C2A3FF` |
+
+### 8.2 EXP004 原模型 tiled 全量
+
+配置为 `test_inference.py`、`conf=0.30`、`iou=0.60`、tile `1024/0.20`、merge IoU `0.50`、tile batch `4`。
+
+| 分组 | Recall | FDR | TP | FP | FN |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| ship | 0.834601 | 0.174812 | 439 | 93 | 87 |
+| aircraft | 0.983773 | 0.048417 | 3577 | 182 | 59 |
+| vehicle | 0.802469 | 0.285714 | 65 | 26 | 16 |
+| 三大类 pooled 宏平均 | 0.873614 | 0.169648 | - | - | - |
+
+整体 TP/FP/FN 为 `4081/301/162`，总耗时 `34.024 s`，最大单图 `4.102 s`。历史兼容口径三项 gate 通过；按细分类别宏平均 Recall 为 `0.844286`，未达到 `0.85`，说明类别不均衡时结果仍有风险。
+
+### 8.3 EXP004 control 与 gray027
+
+两者均使用 `run_v2_modality_experiment.py` 的 tiled Detector、897 张相同验证图、相同模型和相同 FSC/飞机阈值，因而这组对照有效。
+
+| 指标 | EXP004 control | EXP004 + gray027 | gray027 - control |
+| --- | ---: | ---: | ---: |
+| ship Recall | 0.834601 | 0.838403 | +0.003802 |
+| ship FDR | 0.174812 | 0.189338 | +0.014526 |
+| aircraft Recall | 0.983773 | 0.983773 | 0 |
+| aircraft FDR | 0.048417 | 0.048417 | 0 |
+| vehicle Recall | 0.777778 | 0.777778 | 0 |
+| vehicle FDR | 0.222222 | 0.222222 | 0 |
+| 三大类 pooled 宏 Recall | 0.865384 | 0.866651 | +0.001267 |
+| 三大类 pooled 宏 FDR | 0.148484 | 0.153326 | +0.004842 |
+| 最大单图耗时 | 3.531 s | 3.719 s | +0.188 s |
+
+EXP004 control 的 TP/FP/FN 为 `4079/293/164`；gray027 为 `4081/303/162`。gray027 只多找回 2 个目标，同时增加 10 个误检，收益很小，control 的 FDR 余量更好。
+
+### 8.4 与 EXP003 同策略对照
+
+| 对照 | 宏 Recall 变化 | 宏 FDR 变化 | 结论 |
+| --- | ---: | ---: | --- |
+| EXP003 control -> EXP004 control | -0.017202 | -0.043320 | 召回下降，虚警明显下降 |
+| EXP003 gray027 -> EXP004 gray027 | -0.016569 | -0.045445 | 召回下降，虚警明显下降 |
+
+这说明继续训练没有带来整体召回提升，而是把模型推向更保守的预测：FDR 改善明显，但 Recall 下降。模型训练因素本身暂不能判定为正向提升。
+
+## 9. 错误分析结论
+
+EXP004 + `gray027` 错误分析覆盖 897 张图，其中 `235` 张存在至少一个错误，渲染了错误最多的 50 张图。
+
+按误检/漏检数量，当前最需要关注：
+
+| 类别 | 误检 FP | 漏检 FN | 判断 |
+| --- | ---: | ---: | --- |
+| MS | 75 | 55 | 船只组主要错误来源，既有重复/虚警也有漏检 |
+| QHS | 27 | 26 | 类别边界和小目标识别不稳定 |
+| FSC | 18 | 18 | vehicle 召回与虚警同时偏弱 |
+| A13_F-15 | 27 | 4 | 典型飞机类别混淆，误检较集中 |
+| A20_SU-24 | 1 | 11 | 漏检明显，应检查样本和标注 |
+
+错误最多的图像同时出现重复飞机框、相近飞机类别混淆、MS/QHS 互相混淆和 FSC 漏检。当前问题更像类别/目标尺度/边界截断与数据分布问题，不能靠继续降低船只阈值解决。
+
+## 10. 验收决定
+
+- EXP004 模型和三套全量本地结果均已保留，结果 schema、覆盖率和推理时间正常。
+- 按当前历史兼容口径，EXP004 raw、control、gray027 均通过三项 gate；按细分类别宏 Recall 口径，三者均低于 `0.85`，不能把本地结果写成稳妥通过。
+- 在 EXP004 的同入口对照中，control 比 gray027 更稳：FDR 更低，召回只低 `0.001267`。当前暂选 control 作为 Docker 候选起点，gray027 作为备选，不直接提交。
+- 继续训练的主要效果是降低 FDR、牺牲 Recall；不能据此认定模型训练已经改善隐藏测试表现。
+- 下一步是把 EXP004 control 模型接入 Docker，做 `--network none` 的 12 张 smoke 和完整本地集成验收；通过后再讨论是否使用剩余平台提交次数。
