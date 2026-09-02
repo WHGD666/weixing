@@ -170,3 +170,8 @@ macro FDR    = (0.174486 + 0.182432 + 0.524823) / 3 = 0.293914
 - 不删除或覆盖 `EXP002` 输出，后续报告和比较必须引用本记录中的模型哈希与镜像 digest。
 - 下一轮先修正训练初始化方式，确保“旧模型微调”和“从头训练”不再混淆；然后分别比较原始标签与 data2 标签，减少一次改变的变量。
 - 数据集后续工作应优先审计 ship、vehicle 的漏标、过大框、类别边界和隐藏分布代表性；不能仅凭本地整体 mAP 判断是否上传。
+
+## 报告图片素材
+
+- [EXP002 训练曲线](../evidence/EXP002_data2_manual_revision/results.png)
+- [EXP002 验证集预测示例](../evidence/EXP002_data2_manual_revision/val_batch0_pred.jpg)

@@ -231,3 +231,9 @@ EXP004 + `gray027` 错误分析覆盖 897 张图，其中 `235` 张存在至少�
 - 在 EXP004 的同入口对照中，control 比 gray027 更稳：FDR 更低，召回只低 `0.001267`。当前暂选 control 作为 Docker 候选起点，gray027 作为备选，不直接提交。
 - 继续训练的主要效果是降低 FDR、牺牲 Recall；不能据此认定模型训练已经改善隐藏测试表现。
 - 下一步是把 EXP004 control 模型接入 Docker，做 `--network none` 的 12 张 smoke 和完整本地集成验收；通过后再讨论是否使用剩余平台提交次数。
+
+## 报告图片素材
+
+- [EXP004 训练曲线](../evidence/EXP004_original_continue40/results.png)
+- [EXP004 验证集预测示例](../evidence/EXP004_original_continue40/val_batch0_pred.jpg)
+- [EXP004 错误分析代表图](../evidence/EXP004_original_continue40/error_case_MAR20_193.jpg)

@@ -200,3 +200,7 @@ runs/test/EXP003_v2_modality_soft/metrics/official_metrics.json
 runs/test/EXP003_v2_modality_soft/modality_by_image.csv
 runs/test/EXP003_v2_modality_gray027/metrics/official_metrics.json
 ```
+
+## 报告图片素材
+
+- [EXP003 模态策略指标对比图](../evidence/EXP003_modality_postprocess/modality_metrics.png)

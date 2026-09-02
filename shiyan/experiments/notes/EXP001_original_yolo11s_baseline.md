@@ -116,3 +116,8 @@ runs/detect/runs/train/exp001_original_yolo11s_baseline/
 5. 本地 Docker `--network none` 冒烟测试通过。
 
 如果仍在预测评阶段，可以用该模型优先测试 Docker 流程；若已经进入正式测评阶段，应谨慎使用 5 次提交机会。
+
+## 报告图片素材
+
+- [EXP001 训练曲线](../evidence/EXP001_original_baseline/training_curves.png)
+- [EXP001 训练样本与标签示例](../evidence/EXP001_original_baseline/train_batch0.jpg)
