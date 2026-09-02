@@ -1,8 +1,8 @@
 # AUDIT003：data2 第一轮人工修订入训准备
 
-状态：**ready_for_training，尚未训练**
+状态：**frozen_as_exp002_candidate，训练和平台提交已完成**
 
-本记录对应 2026-09-01 的第一轮人工标签修订。用户已完成前 1360 张图片的人工检查和微调，主要关注舰船与 FSC/导弹车；没有进行大规模新增标注。原始 `shiyan/data` 和 `v0_original` 保持只读，`shiyan/data2` 是人工修改工作副本。
+本记录对应 2026-09-01 的第一轮人工标签修订。用户已完成前 1360 张图片的人工检查和微调，主要关注舰船与 FSC/导弹车；没有进行大规模新增标注。原始 `shiyan/data` 和 `v0_original` 保持只读，`shiyan/data2` 是人工修改工作副本。该候选已完成训练、Docker 本地验收和正式平台提交，结果作为 `EXP002` 冻结，后续不覆盖本实验材料。
 
 ## 1. 当前范围
 
@@ -11,13 +11,13 @@
 | 图片目录 | `shiyan/data2/images/train` |
 | 标签目录 | `shiyan/data2/labels/train` |
 | 图片数量 | `4481` |
-| 当前标签文件数量 | `4477` 个目标标签文件 + `classes.txt` |
+| 当前标签文件数量 | `4481` 个同名标签文件（含 4 个空标签） + `classes.txt` |
 | 人工修订范围 | `0001` 至 `1360` |
 | 未修改范围 | `1361` 至 `4481` |
 | 类别数 | `25` |
 | 原始标签版本 | `v0_original` |
 | 候选标签版本 | `v1_manual_revision_candidate` |
-| 训练状态 | 未开始，机器验收和划分映射已通过 |
+| 训练状态 | 已完成 55 轮；候选已冻结 |
 
 ## 2. 已发现的文件级问题
 
@@ -95,7 +95,7 @@ Get-Content shiyan/configs/train/exp002_data2_manual_revision.yaml
 yolo detect train cfg=shiyan/configs/train/exp002_data2_manual_revision.yaml
 ```
 
-本配置从已保存的 `submit/v2/models/best.pt` 继续学习，不下载新的 `yolo11s.pt`，输入尺寸 `1024`、batch `4`、GPU `0`、最多 55 轮。若 RTX 4060 Laptop 显存不足，只把命令改为：
+配置文件虽然写入 `model: submit/v2/models/best.pt`，但实际运行日志和配置包含 `pretrained: false`。当前 Ultralytics 会在这种设置下丢弃 checkpoint 权重，因此本次实际是从头初始化训练，不是基于旧模型微调。这是本次实验的重要混杂因素。输入尺寸 `1024`、batch `4`、GPU `0`、最多 55 轮。若 RTX 4060 Laptop 显存不足，只把命令改为：
 
 ```powershell
 yolo detect train cfg=shiyan/configs/train/exp002_data2_manual_revision.yaml batch=2
@@ -103,17 +103,10 @@ yolo detect train cfg=shiyan/configs/train/exp002_data2_manual_revision.yaml bat
 
 不要改变数据清单、类别顺序或随机种子来规避显存问题。
 
-## 6. 训练完成后的最低回传材料
+## 6. 训练完成后的回传结果
 
-训练完成后请回传：
+训练已完成，模型为 `runs/detect/runs/train/exp002_data2_manual_revision/weights/best.pt`，SHA256 为 `9378660F53BF06E613B580188D724D58647B3E1BF02A7752AB8A0FA77963D8CD`。第 55 轮日志为 Precision `0.91108`、Recall `0.79155`、mAP50 `0.88510`、mAP50-95 `0.66950`。同一 `v1_scene_80_20_data2` 验证清单上的本地官方口径复现和 Docker smoke 均已完成，详细结果见 [EXP002_data2_manual_revision.md](EXP002_data2_manual_revision.md)；平台结果见 [FORMAL002_v2_3720.md](../../submissions/official_feedback/FORMAL002_v2_3720.md)。
 
-- 终端最后的训练状态；
-- `runs/train/exp002_data2_manual_revision/weights/best.pt` 是否生成；
-- `results.csv` 最后一行和最佳轮次；
-- 如有报错，完整报错而不是只截最后一行。
+## 7. 冻结判断
 
-拿到训练结果后，再安排同一 `v1_scene_80_20_data2` 验证清单上的推理、官方指标复现和错误可视化。没有通过标签机器验收前，不把该候选称为可比较模型。
-
-## 7. 当前判断
-
-这轮修改的方向与正式提交暴露的问题一致：集中在舰船和 FSC，而不是盲目改动全部类别；从类别总量看没有大量新增框，主要是删框、类别调整和框微调。4 个空标签已补齐，机器验收和固定划分映射均已通过，当前可以进入 `EXP002` 训练。
+这轮修改的方向与正式提交暴露的问题一致：集中在舰船和 FSC，而不是盲目改动全部类别；从类别总量看没有大量新增框，主要是删框、类别调整和框微调。4 个空标签已补齐，机器验收和固定划分映射均已通过。但平台正式结果 `v2.0` 得分 `58.0075`，低于 `FORMAL001` 的 `70.5805`，且三类宏平均门槛未通过。因此 `EXP002` 作为失败但可追溯的冻结实验保留，`v1.0` 继续作为当前正式基线；下一轮必须先修正 `pretrained: false` 的配置混杂，再单独评估标签修订效果。
