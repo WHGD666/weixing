@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Map the frozen original split lists to the sequentially renamed data2 images."""
+"""Map frozen original splits to a sequentially renamed editable dataset."""
 
 from __future__ import annotations
 
@@ -23,7 +23,12 @@ def read_manifest(path: Path) -> dict[str, dict[str, str]]:
     return by_name
 
 
-def map_split(source: Path, destination: Path, mapping: dict[str, dict[str, str]]) -> int:
+def map_split(
+    source: Path,
+    destination: Path,
+    mapping: dict[str, dict[str, str]],
+    image_root: Path,
+) -> int:
     mapped: list[str] = []
     for raw_line in source.read_text(encoding="utf-8-sig").splitlines():
         source_name = Path(raw_line.strip().replace("\\", "/")).name
@@ -32,7 +37,7 @@ def map_split(source: Path, destination: Path, mapping: dict[str, dict[str, str]
         row = mapping.get(source_name)
         if row is None:
             raise SystemExit(f"Split entry missing from rename manifest: {source_name}")
-        mapped.append(f"shiyan/data2/images/train/{row['new_image_name']}")
+        mapped.append((image_root / row["new_image_name"]).as_posix())
     destination.parent.mkdir(parents=True, exist_ok=True)
     destination.write_text("\n".join(mapped) + "\n", encoding="utf-8")
     return len(mapped)
@@ -65,8 +70,14 @@ def main() -> None:
 
     source_root = Path(args.source_split_root)
     output_root = Path(args.output_split_root)
+    image_root = root / "images" / "train"
     counts = {
-        split: map_split(source_root / f"{split}.txt", output_root / f"{split}.txt", manifest)
+        split: map_split(
+            source_root / f"{split}.txt",
+            output_root / f"{split}.txt",
+            manifest,
+            image_root,
+        )
         for split in ("train", "val")
     }
     if counts["train"] + counts["val"] != len(manifest):
@@ -76,7 +87,7 @@ def main() -> None:
         "source_protocol": "v1_scene_80_20",
         "dataset_root": str(root).replace("\\", "/"),
         "manifest": str(Path(args.manifest)).replace("\\", "/"),
-        "mapping": "old image names mapped to sequential data2 names",
+        "mapping": "old image names mapped to sequential editable-dataset names",
         "image_count": image_count,
         "split_counts": counts,
     }

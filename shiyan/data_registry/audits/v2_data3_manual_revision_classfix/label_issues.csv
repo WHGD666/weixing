@@ -1,0 +1,48 @@
+﻿severity,issue_type,split,path,line_no,class_id,value,message
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/0006.txt,1,2,-0.00486000 0.00486050 0.17983000 0.12879750,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/0012.txt,5,3,0.32432450 -0.00112600 0.42004550 0.15991000,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/0145.txt,1,3,-0.00368050 0.15705550 0.14355850 0.31411050,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/0222.txt,4,3,0.79502400 0.50947900 1.00000000 1.00118500,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/0338.txt,5,3,0.92628950 0.25307100 1.00122850 0.34643700,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/0416.txt,3,3,0.20993750 -0.00496850 0.50931650 0.16024850,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/0434.txt,6,3,-0.00113800 0.36177500 0.07736000 0.44709900,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/0436.txt,2,3,-0.00444400 0.53222250 0.20555600 0.85555550,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/0447.txt,2,3,-0.00234150 0.87002400 0.07728350 0.94613600,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/0447.txt,6,3,0.91451950 0.06557400 1.00351250 0.15339600,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/0449.txt,3,3,0.63628200 0.91867800 0.76050000 1.00089400,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/0507.txt,3,3,-0.00120900 0.37968600 0.05199500 0.43651800,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/0512.txt,3,3,0.86635450 0.53692800 1.00468950 0.66940200,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/0553.txt,1,3,0.00000050 -0.00235850 0.09198150 0.10849050,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/0568.txt,1,3,0.73341250 -0.00710850 0.99881550 0.04857850,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,empty_label_file,train,shiyan/data3/labels/train/0581.txt,,,,label file has no objects
+warn,empty_label_file,train,shiyan/data3/labels/train/0582.txt,,,,label file has no objects
+warn,empty_label_file,train,shiyan/data3/labels/train/0583.txt,,,,label file has no objects
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/0592.txt,1,3,-0.00226950 0.60045400 0.07945550 0.71623200,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/0630.txt,6,3,0.83391450 0.79094100 1.00116150 0.88153300,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/0665.txt,4,3,0.07966750 -0.00118850 0.23781250 0.08323450,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/0776.txt,2,3,-0.00457150 0.83085750 0.23999950 1.00000050,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/0791.txt,2,3,-0.00454500 0.33295450 0.07045500 0.42272750,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/0843.txt,2,3,-0.00476700 0.51966650 0.33253900 0.87365950,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/0881.txt,2,3,-0.00458750 0.85435850 0.10435750 0.99885350,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/0904.txt,1,3,0.43542850 -0.00228550 0.54285750 0.13485750,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/0907.txt,2,3,-0.00450000 0.13385800 0.09448800 0.35433000,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,empty_label_file,train,shiyan/data3/labels/train/0910.txt,,,,label file has no objects
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/0919.txt,2,3,-0.00463550 0.32329100 0.07415950 0.38470500,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/0923.txt,1,3,-0.00496850 0.00496900 0.25465850 0.23850900,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/0942.txt,1,3,-0.00781200 0.56026800 0.02455400 0.61718800,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/1032.txt,3,3,-0.00237250 0.76156600 0.05100850 0.95848200,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/1035.txt,2,3,-0.00450950 0.00451000 0.22547950 0.17249200,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/1070.txt,2,3,-0.00111450 0.28874000 0.11036850 0.43701200,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/1143.txt,3,2,0.83090700 -0.00224000 0.91713300 0.07390800,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/1182.txt,2,3,0.61590100 0.88913800 0.65509500 1.00112000,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/1208.txt,2,2,-0.00125000 0.51250000 0.02625000 0.53500000,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/1208.txt,7,2,-0.01000000 0.54375000 0.03500000 0.56250000,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/1232.txt,1,3,-0.00680250 0.17573700 0.02834450 0.24149700,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/1238.txt,3,3,-0.00481350 0.40553550 0.09265950 0.45246650,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/1250.txt,3,2,0.50681500 -0.00123900 0.56629500 0.06071900,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/1275.txt,10,0,0.87940800 -0.00113750 1.00000000 0.07394750,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/1276.txt,1,2,0.20368050 -0.00613500 0.23926350 0.04539900,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/1297.txt,3,24,-0.00444400 0.87888850 0.01777800 0.91555550,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/1353.txt,5,24,-0.00444400 0.23222200 0.02555600 0.28222200,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/4463.txt,4,3,-0.00464550 0.97677150 0.15447150 1.00000050,box edges exceed normalized image bounds after xywh to xyxy conversion
+warn,box_extends_outside_image,train,shiyan/data3/labels/train/4465.txt,2,2,-0.00459250 0.78760100 0.02755450 0.94259500,box edges exceed normalized image bounds after xywh to xyxy conversion

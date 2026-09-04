@@ -136,6 +136,19 @@ python shiyan/scripts/run_v2_modality_experiment.py `
 
 脚本会生成 `result.json`、`timings.json`、`image_list.txt`、`modality_by_image.csv` 和 `modality_summary.json`。评估方式与普通候选相同：将这些结果交给 `evaluate_official.py`。`--strategy strict` 会把彩色图中的船只预测全部删除，只作为压力对照，不作为默认提交方案。若需要严格复现 v2 基线，应直接评估已有 v2 结果，不把这个诊断脚本的结果冒充 v2 基线。
 
+### 9. 多模型双标签协议搜索
+
+`INF011` 和 `INF012` 将耗时的 GPU 推理与快速 CPU 后处理分开。当前固定流程为：
+
+1. `cache_multi_model_predictions.py` 缓存 A/B/C 三个冻结模型的低阈值预测；
+2. `validate_label_protocol_mapping.py` 验证 D0 与 D3 是同一批图像；
+3. `run_multimodel_postprocess.py` 生成路由、共识或投票候选；
+4. `evaluate_two_label_protocols.py` 对同一候选分别使用 D0、D3 标签评分；
+5. `sweep_group_thresholds.py` 扫描大类、支持度和细分类阈值，并按双协议最差值排序；
+6. `append_model_views_to_cache.py` 只在后续阶段追加尺度或翻转视角，不重复计算已有模型输出。
+
+三模型缓存、模型哈希、环境和完整命令见 [`20260904_inf012_three_model_cache_full.md`](../experiments/run_manifests/20260904_inf012_three_model_cache_full.md)。候选对比见 [`INF012_phase1_candidates.csv`](../experiments/comparisons/INF012_phase1_candidates.csv)，解释性结论见 [`INF012_three_model_dual_protocol_search.md`](../experiments/notes/INF012_three_model_dual_protocol_search.md)。所有内部指标都不是正式平台隐藏测试成绩。
+
 目录：
 
 - `audit/`：数据审计。

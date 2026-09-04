@@ -1,18 +1,18 @@
-"""Ultralytics-backed direct and tiled inference."""
+"""Ultralytics detector used by the v2 delivery entrypoint."""
 
+from collections.abc import Mapping
 from pathlib import Path
 
 import cv2
 import numpy as np
 from ultralytics import YOLO
 
-from .labels import CLASS_COUNT, CLASS_NAMES
-from .postprocess import class_aware_nms
-from .types import Detection
+from labels import CLASS_COUNT, CLASS_NAMES
+from postprocess import class_aware_nms, filter_class_thresholds
 
 
-class Predictor:
-    """Load one frozen model and predict one image at a time."""
+class Detector:
+    """Load one model and expose direct or tiled pixel-coordinate inference."""
 
     def __init__(
         self,
@@ -20,14 +20,15 @@ class Predictor:
         *,
         device: str = "0",
         imgsz: int = 1024,
-        conf: float = 0.25,
-        iou: float = 0.7,
+        conf: float = 0.30,
+        iou: float = 0.60,
         max_det: int = 300,
-        mode: str = "direct",
+        mode: str = "tiled",
         tile_size: int = 1024,
-        tile_overlap: float = 0.2,
-        merge_iou: float = 0.5,
+        tile_overlap: float = 0.20,
+        merge_iou: float = 0.50,
         tile_batch: int = 4,
+        class_thresholds: Mapping[int, float] | None = None,
     ) -> None:
         self.model_path = Path(model_path)
         if not self.model_path.is_file():
@@ -36,12 +37,12 @@ class Predictor:
             raise ValueError("mode must be direct or tiled")
         if imgsz <= 0 or max_det <= 0 or tile_size <= 0 or tile_batch <= 0:
             raise ValueError("imgsz, max_det, tile_size and tile_batch must be positive")
-        if not 0.0 <= conf <= 1.0:
-            raise ValueError("conf must be in [0, 1]")
-        if not 0.0 <= iou <= 1.0:
-            raise ValueError("iou must be in [0, 1]")
+        if not 0.0 <= conf <= 1.0 or not 0.0 <= iou <= 1.0:
+            raise ValueError("conf and iou must be in [0, 1]")
         if not 0.0 <= tile_overlap < 0.9:
             raise ValueError("tile_overlap must be in [0, 0.9)")
+        if not 0.0 < merge_iou <= 1.0:
+            raise ValueError("merge_iou must be in (0, 1]")
 
         self.device = str(device)
         self.imgsz = imgsz
@@ -53,8 +54,12 @@ class Predictor:
         self.tile_overlap = tile_overlap
         self.merge_iou = merge_iou
         self.tile_batch = tile_batch
-        if not 0.0 < merge_iou <= 1.0:
-            raise ValueError("merge_iou must be in (0, 1]")
+        self.class_thresholds = {int(category_id): float(value) for category_id, value in (class_thresholds or {}).items()}
+        for category_id, threshold in self.class_thresholds.items():
+            if not 0 <= category_id < CLASS_COUNT:
+                raise ValueError(f"class threshold category_id outside contract: {category_id}")
+            if not 0.0 <= threshold <= 1.0:
+                raise ValueError(f"class threshold must be in [0, 1]: {category_id}={threshold}")
         self.model = YOLO(str(self.model_path))
         self._validate_model_names()
 
@@ -65,12 +70,9 @@ class Predictor:
         else:
             normalized = list(names)
         if normalized[:CLASS_COUNT] != list(CLASS_NAMES):
-            raise ValueError(
-                "model class order does not match the frozen project label contract: "
-                f"{normalized[:CLASS_COUNT]}"
-            )
+            raise ValueError(f"model class order does not match frozen label contract: {normalized[:CLASS_COUNT]}")
 
-    def _predict_arrays(self, images: list[np.ndarray]) -> list[list[Detection]]:
+    def _predict_arrays(self, images: list[np.ndarray]) -> list[list[dict[str, object]]]:
         results = self.model.predict(
             source=images,
             imgsz=self.imgsz,
@@ -83,26 +85,24 @@ class Predictor:
         return [self._read_result(result) for result in results]
 
     @staticmethod
-    def _read_result(result: object, origin: tuple[int, int] = (0, 0)) -> list[Detection]:
+    def _read_result(result: object) -> list[dict[str, object]]:
         boxes = getattr(result, "boxes", None)
         if boxes is None or len(boxes) == 0:
             return []
         xyxy = boxes.xyxy.detach().cpu().numpy()
         scores = boxes.conf.detach().cpu().numpy()
         classes = boxes.cls.detach().cpu().numpy()
-        offset_x, offset_y = origin
-        detections: list[Detection] = []
+        detections: list[dict[str, object]] = []
         for coordinates, score, category in zip(xyxy, scores, classes):
             category_id = int(category)
             if not 0 <= category_id < CLASS_COUNT:
                 raise ValueError(f"model returned category_id outside contract: {category_id}")
-            x1, y1, x2, y2 = coordinates.tolist()
             detections.append(
-                Detection(
-                    category_id=category_id,
-                    score=float(score),
-                    bbox=(x1 + offset_x, y1 + offset_y, x2 + offset_x, y2 + offset_y),
-                )
+                {
+                    "category_id": category_id,
+                    "score": float(score),
+                    "bbox": [float(value) for value in coordinates.tolist()],
+                }
             )
         return detections
 
@@ -127,51 +127,47 @@ class Predictor:
             for x in starts(width)
         ]
 
-    def _predict_tiled(self, image: np.ndarray) -> list[Detection]:
+    def _predict_tiled(self, image: np.ndarray) -> list[dict[str, object]]:
         height, width = image.shape[:2]
         windows = self._tile_windows(width, height)
-        detections: list[Detection] = []
+        detections: list[dict[str, object]] = []
         for start in range(0, len(windows), self.tile_batch):
             batch_windows = windows[start : start + self.tile_batch]
             tiles = [image[y1:y2, x1:x2] for x1, y1, x2, y2 in batch_windows]
             batch_results = self._predict_arrays(tiles)
             for result, (x1, y1, x2, y2) in zip(batch_results, batch_windows):
                 for detection in result:
-                    translated = (
-                        detection.bbox[0] + x1,
-                        detection.bbox[1] + y1,
-                        detection.bbox[2] + x1,
-                        detection.bbox[3] + y1,
-                    )
-                    clipped = (
+                    box = detection["bbox"]
+                    translated = [
+                        float(box[0]) + x1,
+                        float(box[1]) + y1,
+                        float(box[2]) + x1,
+                        float(box[3]) + y1,
+                    ]
+                    clipped = [
                         max(0.0, min(float(width), translated[0])),
                         max(0.0, min(float(height), translated[1])),
                         max(0.0, min(float(width), translated[2])),
                         max(0.0, min(float(height), translated[3])),
-                    )
+                    ]
                     if clipped[2] > clipped[0] and clipped[3] > clipped[1]:
                         detections.append(
-                            Detection(detection.category_id, detection.score, clipped)
+                            {
+                                "category_id": int(detection["category_id"]),
+                                "score": float(detection["score"]),
+                                "bbox": clipped,
+                            }
                         )
         return class_aware_nms(detections, self.merge_iou, self.max_det)
 
-    def predict_image(self, image_path: str | Path) -> tuple[int, int, list[Detection]]:
-        """Return width, height and pixel-coordinate detections for one image."""
-
+    def predict_image(self, image_path: str | Path) -> tuple[int, int, list[dict[str, object]]]:
         path = Path(image_path)
         image = cv2.imread(str(path), cv2.IMREAD_COLOR)
         if image is None:
             raise ValueError(f"unable to read image: {path}")
-        return self.predict_array(image)
-
-    def predict_array(self, image: np.ndarray) -> tuple[int, int, list[Detection]]:
-        """Return detections for an already-loaded BGR image."""
-
-        if not isinstance(image, np.ndarray) or image.ndim != 3 or image.shape[2] != 3:
-            raise ValueError("image must be a BGR array with shape HxWx3")
         height, width = image.shape[:2]
         if self.mode == "direct":
             detections = self._predict_arrays([image])[0]
         else:
             detections = self._predict_tiled(image)
-        return width, height, detections
+        return width, height, filter_class_thresholds(detections, self.class_thresholds)

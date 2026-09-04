@@ -1,0 +1,4 @@
+﻿split,long_side_bucket,image_count
+train,1025-1536,30
+train,641-1024,4448
+train,<=640,3

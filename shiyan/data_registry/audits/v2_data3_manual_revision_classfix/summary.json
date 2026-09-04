@@ -1,0 +1,17 @@
+{
+  "audit_version": "v2_data3_manual_revision_classfix",
+  "generated_at_utc": "2026-09-02T15:42:53.112641+00:00",
+  "data_root": "shiyan/data3",
+  "dataset_fingerprint_sha256": "9e330f03b56c3728ed1c485404d92306ed94edb22c7bcd8a0f09ac0a91438fa8",
+  "image_count": 4481,
+  "label_file_count": 4481,
+  "ignored_auxiliary_label_files": 1,
+  "object_count": 21008,
+  "class_count": 25,
+  "duplicate_image_rows": 0,
+  "scene_group_count": 4481,
+  "scene_group_split_overlap_count": 0,
+  "issue_count": 47,
+  "error_count": 0,
+  "warn_count": 47
+}

@@ -1,0 +1,11 @@
+{
+  "source_protocol": "v1_scene_80_20",
+  "dataset_root": "shiyan/data3",
+  "manifest": "shiyan/data2/manifests/rename_0001_4481_manifest.csv",
+  "mapping": "old image names mapped to sequential editable-dataset names",
+  "image_count": 4481,
+  "split_counts": {
+    "train": 3584,
+    "val": 897
+  }
+}

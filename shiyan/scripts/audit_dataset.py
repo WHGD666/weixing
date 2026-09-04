@@ -158,6 +158,8 @@ def audit(args: argparse.Namespace) -> int:
     images_root = data_root / "images"
     labels_root = data_root / "labels"
     dataset_yaml = data_root / "dataset.yaml"
+    if not dataset_yaml.exists():
+        dataset_yaml = data_root / "coco.yaml"
 
     issues: list[dict[str, Any]] = []
     image_rows: list[dict[str, Any]] = []

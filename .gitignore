@@ -24,6 +24,14 @@ shangchuan/data/
 shangchuan/*.zip
 .agents/
 
+# Local editable datasets: keep only lightweight manifests/configuration in Git
+shiyan/data2/images/
+shiyan/data2/labels/
+shiyan/data2/manifests/*.json
+shiyan/data3/images/
+shiyan/data3/labels/
+shiyan/data_registry/audits/v2_data3_manual_revision_classfix/objects.csv
+
 # Experiment worktree bulk artifacts
 shiyan/artifacts/predictions/*
 !shiyan/artifacts/predictions/.gitkeep
@@ -105,3 +113,9 @@ submit/v2/test-input-smoke/
 !submit/v2/test-output/README.md
 submit/v2/test-output/*
 !submit/v2/test-output/README.md
+
+# Local validation payloads for later submission workspaces
+submit/v*/test-input-smoke/*
+!submit/v*/test-input-smoke/README.md
+submit/v*/test-output/*
+!submit/v*/test-output/README.md
