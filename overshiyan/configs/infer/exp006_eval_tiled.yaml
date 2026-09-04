@@ -1,0 +1,14 @@
+imgsz: 1024
+conf: 0.10
+iou: 0.60
+max_det_per_tile: 300
+max_det_image: 3000
+mode: tiled
+tile_size: 1024
+tile_overlap: 0.20
+merge_iou: 0.50
+tile_batch: 1
+half: true
+ship_conf: 0.30
+aircraft_conf: 0.30
+vehicle_conf: 0.35

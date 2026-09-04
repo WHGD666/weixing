@@ -1,0 +1,13 @@
+target_gpu: NVIDIA GeForce RTX 3090
+target_vram_gb: 24
+runtime_network: none
+python: 3.10
+pytorch: 2.5.1
+torchvision: 0.20.1
+cuda: 12.1
+ultralytics: 8.4.128
+opencv: 4.11.0.86
+default_tile_batch: 1
+benchmark_tile_batches: [1, 2, 4]
+latency_gate_seconds_per_image: 20.0
+required_output: /output/result.json

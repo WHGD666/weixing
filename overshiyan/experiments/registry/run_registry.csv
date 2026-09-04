@@ -1,0 +1,2 @@
+run_id,experiment_id,status,host_gpu,started_at,finished_at,checkpoint_sha256,d3_recall,d3_fdr,d0_recall,d0_fdr,worst_recall,worst_fdr,notes
+20260904_train_exp006_x0_5090,EXP006_X0_data3_yolo11x_1024,RUNNING,"NVIDIA GeForce RTX 5090 32GB",2026-09-04T19:56:00+08:00,,,,,,,,,"bundle_sha256=3476525e3cbc7fc4f9e6d9acef607e9ccfe87ea03718faeaadbd9696f411784f; data_fingerprint=7615f507bebade10696c4f32a708951e91133ee5736e08da9b4e7834a3e3b956; epoch6 interim only"

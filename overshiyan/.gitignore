@@ -1,0 +1,23 @@
+# Source data stays local or is uploaded separately to the GPU host.
+data3/images/
+data3/labels/
+
+# Generated datasets and experiment outputs.
+workspace/
+runs/
+artifacts/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Model binaries are tracked by manifest and SHA256, not by Git.
+models/**/*.pt
+submit/models/*.pt
+/yolo11x.pt
+
+# Local environments and editor files.
+.venv/
+venv/
+.env
+.idea/
+.vscode/

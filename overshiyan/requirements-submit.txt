@@ -1,0 +1,5 @@
+# Reference only. The Docker image is frozen by submit/environment.yml.
+ultralytics==8.4.128
+numpy==1.26.4
+opencv-python-headless==4.11.0.86
+PyYAML==6.0.3

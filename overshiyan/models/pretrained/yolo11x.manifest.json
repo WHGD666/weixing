@@ -1,0 +1,9 @@
+{
+  "bytes": 114636239,
+  "created_at_utc": "2026-09-04T11:24:57+00:00",
+  "model_scale": "x",
+  "parameter_count": 56966176,
+  "path": "D:\\daima\\weixing\\overshiyan\\models\\pretrained\\yolo11x.pt",
+  "sha256": "7bc158aa95c0ebfdd87f70f01653c1131b93e92522dbe15c228bcd742e773a24",
+  "ultralytics_version": "8.4.128"
+}

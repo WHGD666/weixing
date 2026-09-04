@@ -1,0 +1,28 @@
+name: detector
+
+channels:
+  - https://mirrors.sustech.edu.cn/anaconda/cloud/pytorch
+  - https://mirrors.sustech.edu.cn/anaconda-extra/cloud/nvidia
+  - https://mirrors.sustech.edu.cn/anaconda/cloud/conda-forge
+
+dependencies:
+  - python=3.10
+  - pip
+  - pytorch=2.5.1
+  - torchvision=0.20.1
+  - pytorch-cuda=12.1
+  - numpy=1.26.4
+  - pillow>=11,<12
+  - pyyaml>=6,<7
+  - psutil>=5.9,<8
+  - requests>=2.31,<3
+  - tqdm>=4.66,<5
+  - filelock>=3.16,<4
+  - packaging>=23,<27
+  - py-cpuinfo>=9,<10
+  - pip:
+      - ultralytics==8.4.128
+      - opencv-python-headless==4.11.0.86
+      - polars==1.44.0
+      - nvidia-ml-py==13.610.43
+      - ultralytics-thop==2.1.6

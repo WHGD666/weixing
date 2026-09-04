@@ -55,6 +55,15 @@ models/
 *.engine
 *.trt
 
+# Keep the lightweight model manifests for the isolated YOLO11x workspace.
+!overshiyan/models/
+!overshiyan/models/pretrained/
+!overshiyan/models/pretrained/README.md
+!overshiyan/models/pretrained/*.manifest.json
+!overshiyan/models/frozen/
+!overshiyan/models/frozen/README.md
+overshiyan/models/**/*.pt
+
 # Logs and experiment trackers
 logs/
 wandb/
@@ -66,6 +75,7 @@ tensorboard/
 *.zip
 *.tar
 *.tar.gz
+overshiyan_remote_*.sha256
 *.7z
 *.rar
 *.npy

@@ -1,0 +1,19 @@
+{
+  "class_count": 25,
+  "created_at_utc": "2026-09-04T11:24:35+00:00",
+  "data": "D:\\daima\\weixing\\overshiyan\\workspace\\data3_exp006\\data.yaml",
+  "errors": [],
+  "ok": true,
+  "splits": {
+    "train": {
+      "empty_images": 4,
+      "images": 3584,
+      "objects": 16756
+    },
+    "val": {
+      "empty_images": 0,
+      "images": 897,
+      "objects": 4250
+    }
+  }
+}

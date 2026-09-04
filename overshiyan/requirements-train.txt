@@ -1,0 +1,7 @@
+# The rented image already supplies PyTorch 2.10 + CUDA 12.8. Do not install a
+# different torch build in this file.
+ultralytics==8.4.128
+numpy>=1.26,<3
+opencv-python-headless==4.11.0.86
+PyYAML>=6.0,<7
+psutil>=5.9,<8

@@ -1,0 +1,30 @@
+dataset_id: data3_manual_revision_classfix
+pretrained_model: yolo11x.pt
+pretrained_model_sha256: 7bc158aa95c0ebfdd87f70f01653c1131b93e92522dbe15c228bcd742e773a24
+expected_images: 4481
+expected_labels: 4481
+expected_classes: 25
+intentional_empty_stems: ["0581", "0582", "0583", "0910"]
+class_groups:
+  ship: [0, 1, 2, 3]
+  aircraft: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+  vehicle: [24]
+matching_iou:
+  ship: 0.50
+  aircraft: 0.50
+  vehicle: 0.35
+rigid_gates:
+  group_mean_recall_min: 0.85
+  group_mean_fdr_max: 0.20
+  latency_seconds_max: 20.0
+local_safety_targets:
+  worst_protocol_recall_min: 0.90
+  worst_protocol_fdr_max: 0.12
+split_id: v1_scene_80_20
+train_count: 3584
+val_count: 897
+prepared_train_objects: 16756
+prepared_val_objects: 4250
+prepared_train_empty_images: 4
+prepared_val_empty_images: 0
+source_is_read_only: true

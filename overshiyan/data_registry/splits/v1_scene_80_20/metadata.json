@@ -1,0 +1,13 @@
+{
+  "split_id": "v1_scene_80_20",
+  "source_protocol": "existing_scene_level_assignment",
+  "source_train_list": "shiyan/data_registry/split_assignments/v1_scene_80_20_data3/train.txt",
+  "source_val_list": "shiyan/data_registry/split_assignments/v1_scene_80_20_data3/val.txt",
+  "train_count": 3584,
+  "val_count": 897,
+  "overlap_count": 0,
+  "coverage_count": 4481,
+  "train_sha256": "a294781c04f122b7f75e545cf901171127b735b22f41c1d1974b9e58b5adbc68",
+  "val_sha256": "a71aaef1231a72648b4050eb3c72a3c679603aff5644d2d03a665af588645d7f",
+  "entries": "bare sequential stems; resolved under the prepared dataset view"
+}

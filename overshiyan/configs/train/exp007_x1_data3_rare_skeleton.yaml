@@ -1,0 +1,17 @@
+# Do not run before EXP006-X0 evaluation. The prepared sampling view is generated
+# by a later controlled experiment and must receive its own manifest/fingerprint.
+experiment_id: EXP007_X1_data3_yolo11x_rare
+parent_checkpoint: runs/train/EXP006_X0_data3_yolo11x_1024/weights/best.pt
+data: workspace/data3_exp007_rare/data.yaml
+project: runs/train
+name: EXP007_X1_data3_yolo11x_rare
+imgsz: 1024
+epochs: 40
+patience: 0
+batch: 8
+device: 0
+workers: 12
+amp: true
+seed: 614651
+deterministic: true
+notes: HM/LQS strong sampling, QHS medium, MS natural; validation unchanged
