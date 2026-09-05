@@ -4,7 +4,7 @@
 
 ## 1. 当前阶段
 
-项目处于**最终阶段模型容量实验**：数据、类别顺序、固定划分、三次正式提交和三份 YOLO11s 模型均已冻结；INF012 多模型后处理搜索已经完成。由于本地到平台的船只/车辆 FDR 偏移无法靠小幅后处理稳定解决，当前转向 `EXP006-X0`，使用重新审计的 Data3 和官方 YOLO11x 在 RTX 5090 上训练。当前不生成平台 tag、不消耗剩余两次正式提交机会。
+项目处于**最终阶段模型容量实验收口**：数据、类别顺序、固定划分、三次正式提交和三份 YOLO11s 模型均已冻结；INF012 多模型后处理搜索已经完成。由于本地到平台的船只/车辆 FDR 偏移无法靠小幅后处理稳定解决，`EXP006-X0` 已使用重新审计的 Data3 和官方 YOLO11x 在 RTX 5090 上完成训练。当前选择 `best.pt` 进入 RTX 3090 封装验收；尚不生成平台 tag、不消耗剩余两次正式提交机会。
 
 硬性目标：
 
@@ -43,6 +43,7 @@ D0 与 D3 验证集均为同一批 897 张图，映射顺序一致。EXP006 训�
 | A | `submit/v2/models/best.pt` | `6A26043F7961B037808CC8AC383B53203B7914716726346087F76603406E4F54` | 正式 `v1.0` 对应模型，当前主模型 |
 | B | `runs/detect/runs/train/exp004_original_continue40/weights/best.pt` | `90B39F94D272648781152F28EF840B553D1AF64441815522319E7461C756048B` | 正式 `v3.0` 对应续训模型 |
 | C | `runs/detect/runs/train/exp005_data3_manual_revision_classfix-2/weights/best.pt` | `3D3C8CB2B256B127668EC113F50DA7C261A295C30C7AEB2A2E177D2682D5A0E5` | D3 人工修订模型，仅作诊断/确认来源 |
+| X | `runs/remote_archive/EXP006_20260904/weights/best.pt` | `111AE87E2911DCF35A68CB0B7D047E75F88AB62BAA7367E690324133BBF2D67D` | EXP006 Data3 + YOLO11x 容量对照，进入 3090 封装验收 |
 
 三模型 897 张低阈值缓存位于 `runs/test/INF012_three_model_cache_full_20260904/`。缓存 SHA256 为 `D1C1E3E21B0C9E1ACF5D1BF43C01699162383533F4513E84E685711692C43A4A`，大小 4,557,143 字节；三模型累计最大单图代理时间 `5.257 s`。
 
@@ -97,6 +98,8 @@ P1 固定参数：匹配 IoU/组内 NMS IoU `0.50/0.50`；共识框 S/A/V `0.25/
 - FORMAL003 复盘：`shiyan/submissions/official_feedback/FORMAL003_v3_3872.md`
 - INF012 完整记录：`shiyan/experiments/notes/INF012_three_model_dual_protocol_search.md`
 - INF012 机器可读对比：`shiyan/experiments/comparisons/INF012_phase1_candidates.csv`
+- EXP006 完整记录：`overshiyan/experiments/notes/EXP006_X0_data3_yolo11x_1024.md`
+- EXP006 checkpoint 对比：`overshiyan/experiments/comparisons/EXP006_checkpoint_comparison.csv`
 
 `runs/`、模型权重、缓存、测试图片和 Docker 本地输出不上传 GitHub；Git 中只保留代码、配置、小型结果表、哈希、命令和结论。
 
@@ -135,10 +138,28 @@ P1 固定参数：匹配 IoU/组内 NMS IoU `0.50/0.50`；共识框 S/A/V `0.25/
 
 ### 后续验收
 
-1. 训练完成后冻结并哈希 best、last 和有价值的周期权重。
-2. 对每个候选只运行一次完整 897 图预测，同一预测同时按 D3 和映射 D0 评分。
-3. 以最差协议的三大类宏 Recall/FDR 和门槛余量排序，不用 mAP 或综合分替代刚性指标。
-4. 进入提交前必须通过输出 schema、RTX 3090 24 GB 显存/时间和 Docker 无网络全量验证。
-5. EXP006 未完成评估前，EXP007 稀有船类增强保持阻塞，不混入当前对照实验。
+### 完成结果与冻结决定
+
+EXP006 已完成 60 轮训练，`run_manifest.json` 记录开始时间
+`2026-09-04T11:56:52+00:00`、结束时间 `2026-09-04T13:50:38+00:00`。
+Ultralytics 选择第 55 轮为 `best.pt`，其 P/R/mAP50/mAP50-95 为
+`.93424/.96302/.96667/.73339`。第 60 轮 `last.pt` 没有带来足够收益。
+
+| 候选 | 最差协议 Recall | 最差协议 FDR | D0 Recall/FDR | D3 Recall/FDR | 5090 最大单图时间 | 决策 |
+| --- | ---: | ---: | --- | --- | ---: | --- |
+| `best.pt` | .885259 | .185691 | .885259/.185691 | .897675/.176099 | 4.284 s | 进入 3090 验收 |
+| `last.pt` | .886076 | .197365 | .886076/.197365 | .894885/.190603 | 4.344 s | 拒绝，FDR 余量过小 |
+
+`best.pt` 同时通过 D0 与 D3 的本地三大类门槛，但未达到内部安全目标
+Recall `>= .90` 且 FDR `<= .12`。因此它是候选包对象，不是已经确认的正式
+平台解法。
+
+### 后续验收
+
+1. 只使用 EXP006 `best.pt` 准备提交候选包。
+2. 对候选包运行输出 schema 检查，并复核类别编号、框格式和空结果处理。
+3. 在 RTX 3090 24 GB 或等价约束下完成 Docker 无网络 smoke/full 验收，推理参数保持 `tile_batch=1`。
+4. 记录镜像 digest、3090 显存/时间、D0/D3 指标后，才讨论正式 `v4.0` 或其他平台 tag。
+5. EXP007 稀有船类增强保持阻塞，除非 EXP006 best 被 3090 验收淘汰或明确需要继续训练。
 
 完整工程与运行证据见 `overshiyan/README.md`、`overshiyan/experiments/notes/EXP006_X0_data3_yolo11x_1024.md` 和 `overshiyan/experiments/run_manifests/20260904_exp006_x0_remote_train.md`。

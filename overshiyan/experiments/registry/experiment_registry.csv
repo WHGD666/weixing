@@ -1,3 +1,3 @@
 experiment_id,status,parent,data_protocol,model,imgsz,primary_change,notes
-EXP006_X0_data3_yolo11x_1024,RUNNING,,data3_manual_revision_classfix,yolo11x.pt,1024,model_capacity,"5090 control launched 2026-09-04; final dual-protocol metrics pending"
-EXP007_X1_data3_yolo11x_rare,BLOCKED,EXP006_X0_data3_yolo11x_1024,data3_manual_revision_classfix,EXP006 best,1024,rare_class_sampling,Run only after EXP006 evaluation
+EXP006_X0_data3_yolo11x_1024,COMPLETED,,data3_manual_revision_classfix,yolo11x.pt,1024,model_capacity,"5090 control completed; best.pt selected for 3090 packaging validation; worst local Recall/FDR 0.885259/0.185691; not yet a formal submission"
+EXP007_X1_data3_yolo11x_rare,BLOCKED,EXP006_X0_data3_yolo11x_1024,data3_manual_revision_classfix,EXP006 best,1024,rare_class_sampling,Run only after EXP006 best is packaged and benchmarked or explicitly rejected

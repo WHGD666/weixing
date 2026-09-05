@@ -5,10 +5,9 @@ the final competition phase. The source dataset under `data3/` is treated as
 read-only. Every generated split, cleaned label, model, metric, and submission
 artifact is written elsewhere and recorded with hashes.
 
-Current status on 2026-09-04: `EXP006-X0` passed source, loader, environment, and
-fixed-configuration preflight and is running on the RTX 5090 host. Epoch-level
-Ultralytics values remain interim evidence; no checkpoint or submission candidate
-has been selected. See
+Current status on 2026-09-04: `EXP006-X0` completed on the RTX 5090 host.
+`best.pt` is selected for the next RTX 3090 packaging and Docker validation step;
+`last.pt` is rejected because its FDR margin is too thin. See
 [`experiments/run_manifests/20260904_exp006_x0_remote_train.md`](experiments/run_manifests/20260904_exp006_x0_remote_train.md).
 
 ## Fixed experimental contract
@@ -63,6 +62,14 @@ configuration is included as a reviewed next-stage skeleton, not as permission
 to combine several unmeasured changes at once.
 
 ## After training
+
+EXP006 checkpoint ranking is recorded in
+[`experiments/comparisons/EXP006_checkpoint_comparison.csv`](experiments/comparisons/EXP006_checkpoint_comparison.csv).
+The selected `best.pt` result is internal validation only: worst-protocol
+Recall/FDR is `0.885259 / 0.185691` across D0 and D3, and RTX 5090 max-image
+timing was `4.284 s`. Before any formal push, the package still needs output
+schema validation plus RTX 3090 24 GB Docker smoke/full validation with
+`tile_batch=1`.
 
 Inference, dual-protocol evaluation, checkpoint ranking, and submission freezing
 are documented in [RUNBOOK.md](RUNBOOK.md). GPU-heavy commands remain operator

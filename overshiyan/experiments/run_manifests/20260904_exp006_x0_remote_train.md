@@ -7,8 +7,9 @@
 | Run ID | `20260904_train_exp006_x0_5090` |
 | Experiment | `EXP006_X0_data3_yolo11x_1024` |
 | Role | competition model-capacity control |
-| Status | running; no checkpoint selected |
+| Status | completed; `best.pt` selected for next RTX 3090 validation |
 | Started | approximately `2026-09-04 19:56 CST` |
+| Finished | approximately `2026-09-04 21:50 CST` |
 | Training host | NVIDIA GeForce RTX 5090 32 GB |
 | Deployment target | NVIDIA RTX 3090 24 GB |
 
@@ -73,14 +74,59 @@ Observed GPU state: 97% utilization, approximately 20.5 GB used VRAM, 63 C, and
 529 W. These aggregate Ultralytics values only show that optimization is healthy.
 They are not D3/D0 three-group Recall/FDR and are not official hidden-test scores.
 
-## Required closeout
+## Completion evidence
 
-1. Preserve `results.csv`, `args.yaml`, `epoch_timings.csv`, `run_manifest.json`,
-   `best.pt`, `last.pt`, and useful periodic checkpoints.
-2. Hash every evaluated checkpoint.
-3. Run full 897-image inference once per candidate and score identical predictions
-   against D3 and mapped D0 labels.
-4. Rank by worst-protocol gate margin, not Ultralytics fitness alone.
-5. Freeze no model until prediction schema, RTX 3090 timing, and Docker offline
-   execution pass.
+The training process completed normally. `run_manifest.json` records
+`status=COMPLETED`, start time `2026-09-04T11:56:52+00:00`, finish time
+`2026-09-04T13:50:38+00:00`, and official YOLO11x initialization.
+
+| Artifact | SHA256 | Bytes |
+| --- | --- | ---: |
+| `best.pt` | `111ae87e2911dcf35a68cb0b7d047e75f88ab62baa7367e690324133bbf2d67d` | 114496345 |
+| `last.pt` | `af65a3b478c875fbe4fae882b01ed896de3c7ac2f3a6102de4e01a470422b1e2` | 114496345 |
+
+Ultralytics selected epoch 55 as `best.pt`. Its aggregate validation metrics
+were P/R/mAP50/mAP50-95 `0.93424 / 0.96302 / 0.96667 / 0.73339`. Epoch 60 ended
+at `0.93984 / 0.95335 / 0.96289 / 0.72650`.
+
+## Dual-protocol checkpoint evaluation
+
+Both evaluated checkpoints used the same tiled inference contract:
+`conf=0.10`, class thresholds `0.30` for `0-23` and `0.35` for `FSC`,
+`imgsz=1024`, `tile_overlap=0.20`, `merge_iou=0.50`, `iou=0.60`,
+`tile_batch=1`, and FP16. The inference configuration SHA256 is
+`8158784300018b9923bd1cf456c6f2af2776f1fa05306fc68a85a0fd22ac87bc`.
+
+| Candidate | Worst protocol Recall | Worst protocol FDR | D0 Recall/FDR | D3 Recall/FDR | Max image time | Decision |
+| --- | ---: | ---: | --- | --- | ---: | --- |
+| `best.pt` | 0.885259 | 0.185691 | 0.885259 / 0.185691 | 0.897675 / 0.176099 | 4.284 s | selected |
+| `last.pt` | 0.886076 | 0.197365 | 0.886076 / 0.197365 | 0.894885 / 0.190603 | 4.344 s | rejected, FDR margin too thin |
+
+`best.pt` passes the internal D0 and D3 rigid gates. It does not pass the stricter
+planning safety target of Recall `>= 0.90` and FDR `<= 0.12`, so the next step is
+submission engineering validation rather than an automatic formal push.
+
+## Evidence archive
+
+Local evidence was pulled under the ignored directory
+`runs/remote_archive/EXP006_20260904/`:
+
+- `weights/best.pt`, verified by SHA256;
+- `weights/last.pt`, verified by SHA256;
+- `eval/EXP006_best_full/`, including result, timings, manifest, and metrics;
+- `eval/EXP006_last_full/`, including result, timings, manifest, and metrics;
+- `EXP006_evidence_20260904.tar.gz`, containing training logs, `results.csv`,
+  `args.yaml`, `epoch_timings.csv`, audits, configuration, plots, and manifest.
+
+The evidence directory is not committed because it contains large/regenerable
+run artifacts. The committed files retain the hashes, commands, metrics, and
+decisions needed for reproducibility.
+
+## Remaining closeout before any formal submission
+
+1. Package `best.pt` only into the submission skeleton.
+2. Run output-schema validation on the package result.
+3. Run RTX 3090 24 GB smoke and full Docker validation with `tile_batch=1`.
+4. Compare 3090 timing against the `20 s` per-image gate.
+5. Record the package image digest before considering a formal platform tag.
 6. Record any formal platform result separately from this internal evidence.
