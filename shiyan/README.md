@@ -2,7 +2,7 @@
 
 `shiyan/` 是本项目后续所有可复现实验的主工作区。这里先搭架构，不急着写模型代码。
 
-当前阶段：**三次正式提交和 INF012 算法搜索已归档；EXP006 Data3 + YOLO11x 容量对照已在 RTX 5090 完成，正在进入 3090 封装验收前准备，暂不继续提交**。
+当前阶段：**三次正式提交和 INF012 算法搜索已归档；EXP006 Data3 + YOLO11x 容量对照已在 RTX 5090 完成，`best.pt` 已冻结进提交候选包，正在等待 3090/Docker 验收，暂不继续提交**。
 
 截至 2026-09-04 的统一项目状态、版本映射和候选方案见 [`experiments/PROJECT_STATUS_20260904.md`](experiments/PROJECT_STATUS_20260904.md)。
 
@@ -65,7 +65,7 @@ shiyan/
 
 ## 下一步
 
-1. 用 EXP006 `best.pt` 准备提交候选包，不使用 `last.pt`。
-2. 在本地或 3090 环境完成输出 schema、显存、时间和 Docker 无网络 smoke/full 验收。
+1. 用已冻结的 EXP006 `best.pt` 候选包验收，不使用 `last.pt`。
+2. 启动 Docker Desktop 后完成构建、输出 schema、显存、时间和 Docker 无网络 smoke/full 验收。
 3. 验收时继续同时记录 D0/D3 双协议指标，Ultralytics mAP 只作辅助。
-4. 只有 3090 验收稳定后，才讨论下一次正式提交；正式结果必须单独归档。
+4. 只有 3090 验收稳定后，才按平台网页显示的下一正式 tag 上传；正式结果必须单独归档。

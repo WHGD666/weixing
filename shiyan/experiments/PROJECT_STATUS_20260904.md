@@ -4,7 +4,7 @@
 
 ## 1. 当前阶段
 
-项目处于**最终阶段模型容量实验收口**：数据、类别顺序、固定划分、三次正式提交和三份 YOLO11s 模型均已冻结；INF012 多模型后处理搜索已经完成。由于本地到平台的船只/车辆 FDR 偏移无法靠小幅后处理稳定解决，`EXP006-X0` 已使用重新审计的 Data3 和官方 YOLO11x 在 RTX 5090 上完成训练。当前选择 `best.pt` 进入 RTX 3090 封装验收；尚不生成平台 tag、不消耗剩余两次正式提交机会。
+项目处于**最终阶段模型容量实验收口**：数据、类别顺序、固定划分、三次正式提交和三份 YOLO11s 模型均已冻结；INF012 多模型后处理搜索已经完成。由于本地到平台的船只/车辆 FDR 偏移无法靠小幅后处理稳定解决，`EXP006-X0` 已使用重新审计的 Data3 和官方 YOLO11x 在 RTX 5090 上完成训练。当前 `best.pt` 已冻结进 `overshiyan/submit/` 候选包，等待 Docker/RTX 3090 验收；尚未生成平台 tag、不消耗剩余两次正式提交机会。
 
 硬性目标：
 
@@ -156,10 +156,11 @@ Recall `>= .90` 且 FDR `<= .12`。因此它是候选包对象，不是已经确
 
 ### 后续验收
 
-1. 只使用 EXP006 `best.pt` 准备提交候选包。
+1. 使用已冻结的 EXP006 `best.pt` 候选包继续验收，不使用 `last.pt`。
 2. 对候选包运行输出 schema 检查，并复核类别编号、框格式和空结果处理。
 3. 在 RTX 3090 24 GB 或等价约束下完成 Docker 无网络 smoke/full 验收，推理参数保持 `tile_batch=1`。
-4. 记录镜像 digest、3090 显存/时间、D0/D3 指标后，才讨论正式 `v4.0` 或其他平台 tag。
-5. EXP007 稀有船类增强保持阻塞，除非 EXP006 best 被 3090 验收淘汰或明确需要继续训练。
+4. Docker Desktop 当前本地未启动，需启动后构建 `weixing-submission:x6`。
+5. 记录镜像 digest、3090 显存/时间、D0/D3 指标后，再按平台网页显示的下一正式 tag 推送，预期为 `v4.0`。
+6. EXP007 稀有船类增强保持阻塞，除非 EXP006 best 被 3090 验收淘汰或明确需要继续训练。
 
 完整工程与运行证据见 `overshiyan/README.md`、`overshiyan/experiments/notes/EXP006_X0_data3_yolo11x_1024.md` 和 `overshiyan/experiments/run_manifests/20260904_exp006_x0_remote_train.md`。

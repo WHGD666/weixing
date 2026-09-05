@@ -15,6 +15,10 @@ models/**/*.pt
 submit/models/*.pt
 /yolo11x.pt
 
+# Local submission validation payloads.
+submit/test-input/
+submit/test-output/
+
 # Local environments and editor files.
 .venv/
 venv/
