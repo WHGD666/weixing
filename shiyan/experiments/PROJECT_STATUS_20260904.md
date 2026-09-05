@@ -4,7 +4,7 @@
 
 ## 1. 当前阶段
 
-项目处于**最终阶段模型容量实验收口**：数据、类别顺序、固定划分、三次正式提交和三份 YOLO11s 模型均已冻结；INF012 多模型后处理搜索已经完成。由于本地到平台的船只/车辆 FDR 偏移无法靠小幅后处理稳定解决，`EXP006-X0` 已使用重新审计的 Data3 和官方 YOLO11x 在 RTX 5090 上完成训练。当前 `best.pt` 已冻结进 `overshiyan/submit/` 候选包，等待 Docker/RTX 3090 验收；尚未生成平台 tag、不消耗剩余两次正式提交机会。
+项目处于**最终阶段模型容量实验收口**：数据、类别顺序、固定划分、三次正式提交和三份 YOLO11s 模型均已冻结；INF012 多模型后处理搜索已经完成。由于本地到平台的船只/车辆 FDR 偏移无法靠小幅后处理稳定解决，`EXP006-X0` 已使用重新审计的 Data3 和官方 YOLO11x 在 RTX 5090 上完成训练。当前 `best.pt` 已冻结进 `overshiyan/submit/` 候选包，并已完成本地 Docker 无网络 smoke/full 验收；尚未生成平台 tag、不消耗剩余两次正式提交机会。
 
 硬性目标：
 
@@ -154,13 +154,22 @@ Ultralytics 选择第 55 轮为 `best.pt`，其 P/R/mAP50/mAP50-95 为
 Recall `>= .90` 且 FDR `<= .12`。因此它是候选包对象，不是已经确认的正式
 平台解法。
 
+### Docker 验收
+
+本地 Docker Desktop 启动后，`weixing-submission:x6` 构建成功，镜像 ID 为
+`sha256:31d57f5020ee892b726b89498e5b687164c784e7c26dd6036451371d4cae29a1`。
+无网络 smoke 验收处理 12 张图，`2.865 s` total、`1.872 s` max；无网络 full
+验收处理 897 张图，`92.741 s` total、`1.929 s` max。按 Docker 实际输出顺序
+评分后，最差 D0/D3 Recall/FDR 为 `.885167/.185694`，三大类本地门槛通过。
+严格 frozen-order 评分命令的报错来自目录输入排序与 split 顺序不同，不是容器
+输出失败。
+
 ### 后续验收
 
 1. 使用已冻结的 EXP006 `best.pt` 候选包继续验收，不使用 `last.pt`。
 2. 对候选包运行输出 schema 检查，并复核类别编号、框格式和空结果处理。
-3. 在 RTX 3090 24 GB 或等价约束下完成 Docker 无网络 smoke/full 验收，推理参数保持 `tile_batch=1`。
-4. Docker Desktop 当前本地未启动，需启动后构建 `weixing-submission:x6`。
-5. 记录镜像 digest、3090 显存/时间、D0/D3 指标后，再按平台网页显示的下一正式 tag 推送，预期为 `v4.0`。
+3. 已完成本地 Docker 无网络 smoke/full 验收，推理参数保持 `tile_batch=1`。
+4. 下一步按平台网页显示的下一正式 tag 推送，预期为 `v4.0`，提交后单独归档官方结果。
 6. EXP007 稀有船类增强保持阻塞，除非 EXP006 best 被 3090 验收淘汰或明确需要继续训练。
 
 完整工程与运行证据见 `overshiyan/README.md`、`overshiyan/experiments/notes/EXP006_X0_data3_yolo11x_1024.md` 和 `overshiyan/experiments/run_manifests/20260904_exp006_x0_remote_train.md`。

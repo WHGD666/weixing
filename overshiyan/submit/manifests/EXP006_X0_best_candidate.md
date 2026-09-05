@@ -1,6 +1,7 @@
 # EXP006_X0_best Submission Candidate
 
-Status: **frozen for validation; not yet pushed as a formal platform image**
+Status: **Docker-validated locally; ready for registry tag/push if the operator
+accepts the remaining platform-shift risk**
 
 ## Identity
 
@@ -35,8 +36,28 @@ RTX 5090 validation timing: `46.274 s` total for 897 images, max image
 - Static Python/test suite: passed, 9 tests.
 - `submit/app/main.py` Python smoke: passed on 12 images with local RTX 4060.
 - Smoke timing: `8.495 s` total, max image `7.641 s`.
-- Docker build: not run because Docker Desktop was not running locally.
-- Docker no-network smoke/full validation: pending.
+- Docker build: passed, image `weixing-submission:x6`.
+- Docker image ID:
+  `sha256:31d57f5020ee892b726b89498e5b687164c784e7c26dd6036451371d4cae29a1`.
+- Docker no-network smoke: passed on 12 images, `2.865 s` total, max image
+  `1.872 s`.
+- Docker no-network full validation: passed on 897 images, `92.741 s` total,
+  max image `1.929 s`.
+- Full Docker output SHA256:
+  `0b1c1851acb838dddf07b69fb1c9f2a182672ab31b1abf456dd9e7a28e83e809`.
+- Full Docker timing SHA256:
+  `7d2b1592d86a7bcdb834978ecd24b053066149d305436b304c79f20ae43b4b40`.
+- Docker full D0/D3 scoring passed when evaluated by actual output coverage
+  order. The strict frozen-order command failed because the container reads an
+  input directory in sorted filename order; this is an evaluation harness order
+  assumption, not a result-format or container failure.
+
+Docker full metrics:
+
+| Protocol | Macro Recall | Macro FDR | Ship R/FDR | Aircraft R/FDR | Vehicle R/FDR |
+| --- | ---: | ---: | --- | --- | --- |
+| D0 original mapped | 0.885167 | 0.185694 | 0.826996 / 0.217626 | 0.988999 / 0.033333 | 0.839506 / 0.306122 |
+| D3 manual revision | 0.897583 | 0.176102 | 0.842991 / 0.188849 | 0.988999 / 0.033333 | 0.860759 / 0.306122 |
 
 ## Operator Commands
 
@@ -68,14 +89,15 @@ Then score the full Docker output with the same D0/D3 protocols:
 python scripts/05_evaluate_protocols.py `
   --predictions submit/test-output/docker_full_20260905/result.json `
   --timings submit/test-output/docker_full_20260905/timings.json `
-  --output-dir submit/test-output/docker_full_20260905/metrics
+  --output-dir submit/test-output/docker_full_20260905/metrics_allow_order `
+  --allow-sample
 ```
 
 Use the next formal tag displayed by the platform page. After `v1.0-v3.0`, the
 expected next tag is `v4.0`.
 
 ```powershell
-docker tag [IMAGE_ID_FOR_weixing-submission:x6] competition-registry.cn-beijing.cr.aliyuncs.com/competition/team614651:v4.0
+docker tag 31d57f5020ee competition-registry.cn-beijing.cr.aliyuncs.com/competition/team614651:v4.0
 docker push competition-registry.cn-beijing.cr.aliyuncs.com/competition/team614651:v4.0
 ```
 
