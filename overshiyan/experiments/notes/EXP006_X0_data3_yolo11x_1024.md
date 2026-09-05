@@ -156,3 +156,36 @@ promising local candidate but not yet a guaranteed submission:
 Because previous candidates shifted strongly between local validation and the
 formal platform, this comparison must be treated as evidence for RTX 3090
 packaging, not as an official-score prediction.
+
+## 2026-09-05 official formal v4.0 result
+
+EXP006 `best.pt` was packaged as `weixing-submission:x6`, tagged as platform
+formal `v4.0`, and completed as submission `4312`.
+
+Official hidden-test result:
+
+| Group | Recall | FDR |
+| --- | ---: | ---: |
+| ship | 0.570801 | 0.387526 |
+| aircraft | 0.959279 | 0.052816 |
+| vehicle | 0.852632 | 0.372093 |
+
+Derived three-group macro result:
+
+- Macro Recall: `0.794237`
+- Macro FDR: `0.270812`
+- Average inference time: `3.3346 s`
+- Score: `67.0379`
+- Rigid-gate status: Recall failed, FDR failed, time passed
+
+Decision: reject EXP006 as a direct hidden-test solution. The experiment remains
+valuable negative evidence: increasing capacity from YOLO11s to YOLO11x and
+training on Data3 improved local dual-protocol validation, but did not transfer
+to the formal ship distribution. Compared with formal `v1.0`, ship Recall fell
+from `0.699474` to `0.570801` and ship FDR rose from `0.251032` to `0.387526`.
+Aircraft stayed essentially stable; vehicle Recall remained usable, but vehicle
+FDR stayed too high at `0.372093`.
+
+For the final submission, do not assume that Data3 + YOLO11x is safer than the
+formal `v1.0` lineage. Any final change must explicitly address hidden ship
+recall and ship/vehicle FDR rather than relying on model capacity alone.

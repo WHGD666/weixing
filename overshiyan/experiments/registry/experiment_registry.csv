@@ -1,3 +1,3 @@
 experiment_id,status,parent,data_protocol,model,imgsz,primary_change,notes
-EXP006_X0_data3_yolo11x_1024,COMPLETED,,data3_manual_revision_classfix,yolo11x.pt,1024,model_capacity,"5090 control completed; best.pt selected for 3090 packaging validation; worst local Recall/FDR 0.885259/0.185691; not yet a formal submission"
+EXP006_X0_data3_yolo11x_1024,OFFICIAL_RESULT_RECEIVED,,data3_manual_revision_classfix,yolo11x.pt,1024,model_capacity,"5090 control completed; best.pt selected and submitted as formal v4.0; local Docker worst Recall/FDR 0.885167/0.185694 but official hidden macro Recall/FDR 0.794237/0.270812, so the direct Data3+YOLO11x replacement was rejected"
 EXP007_X1_data3_yolo11x_rare,BLOCKED,EXP006_X0_data3_yolo11x_1024,data3_manual_revision_classfix,EXP006 best,1024,rare_class_sampling,Run only after EXP006 best is packaged and benchmarked or explicitly rejected

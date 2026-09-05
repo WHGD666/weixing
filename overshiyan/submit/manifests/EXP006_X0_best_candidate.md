@@ -1,7 +1,7 @@
 # EXP006_X0_best Submission Candidate
 
-Status: **Docker-validated locally; ready for registry tag/push if the operator
-accepts the remaining platform-shift risk**
+Status: **FORMAL v4.0 submitted and rejected by hidden rigid gates; retained as
+negative platform-shift evidence**
 
 ## Identity
 
@@ -103,3 +103,34 @@ docker push competition-registry.cn-beijing.cr.aliyuncs.com/competition/team6146
 
 Do not commit registry passwords, temporary login tokens, Docker layers, or model
 weights. Record the pushed image digest and platform result separately.
+
+## Official Formal Result
+
+Platform formal `v4.0` was submitted and completed as submission `4312`.
+
+| Group | Recall | FDR |
+| --- | ---: | ---: |
+| ship | 0.570801 | 0.387526 |
+| aircraft | 0.959279 | 0.052816 |
+| vehicle | 0.852632 | 0.372093 |
+
+Derived from the visible platform fields:
+
+- Score: `67.0379`
+- Score time: `2026-09-05 09:24:38`
+- Macro Recall: `0.794237`
+- Macro FDR: `0.270812`
+- Average inference time: `3.3346 s`
+- Rigid gates: Recall failed, FDR failed, time passed
+
+Decision: reject this candidate as a direct replacement for formal `v1.0`.
+Compared with the local Docker D0/D3 worst result, the official hidden result
+lost about `0.090930` macro Recall and gained about `0.085118` macro FDR. The
+shift was concentrated in the ship group: ship Recall fell to `0.570801` and
+ship FDR rose to `0.387526`. Aircraft stayed stable, while vehicle FDR remained
+above the rigid gate.
+
+The final remaining formal opportunity should not reuse this direct
+Data3 + YOLO11x package without a major corrective reason. Full official
+feedback is archived at
+`shiyan/submissions/official_feedback/FORMAL004_v4_4312.md`.
